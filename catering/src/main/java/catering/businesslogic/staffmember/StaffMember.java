@@ -103,6 +103,7 @@ public class StaffMember {
     }
 
     // UTILITY
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
