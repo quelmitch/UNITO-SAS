@@ -14,9 +14,9 @@ public class StaffMemberManager {
 
     private StaffMember currentStaffMember;
 
-    private void isOrganizer() throws UseCaseLogicException {
-        if (!currentStaffMember.hasRole(StaffMember.Role.ORGANIZZATORE)) {
-            throw new UseCaseLogicException("User must be an organizer");
+    private void isAuthorized() throws UseCaseLogicException {
+        if (!currentStaffMember.hasRole(StaffMember.Role.ORGANIZZATORE) && !currentStaffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
+            throw new UseCaseLogicException("User must be authorized");
         }
     }
 
@@ -28,7 +28,7 @@ public class StaffMemberManager {
         String email, String name, String surname, Date dateOfBirth, String address,
         String phone, int wage, StaffMember.EmploymentType employmentType
     ) throws UseCaseLogicException {
-        isOrganizer();
+        isAuthorized();
 
         if (employmentType == StaffMember.EmploymentType.PERMANENTE &&
             !currentStaffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
@@ -43,7 +43,7 @@ public class StaffMemberManager {
     }
 
     public boolean deleteStaffMember(StaffMember staffMember) throws UseCaseLogicException {
-        isOrganizer();
+        isAuthorized();
 
         boolean deleted = StaffMemberDAO.delete(staffMember);
         if (deleted) {
@@ -53,12 +53,12 @@ public class StaffMemberManager {
     }
 
     public boolean hasRole(StaffMember staffMember, StaffMember.Role role) throws UseCaseLogicException {
-        isOrganizer();
+        isAuthorized();
         return staffMember.hasRole(role);
     }
 
     public boolean addRole(StaffMember staffMember, StaffMember.Role role, Set<String> jobs) throws UseCaseLogicException {
-        isOrganizer();
+        isAuthorized();
 
         boolean added = staffMember.addRole(role, jobs);
         if (added) {
@@ -68,7 +68,7 @@ public class StaffMemberManager {
     }
 
     public boolean removeRole(StaffMember staffMember, StaffMember.Role role) throws UseCaseLogicException {
-        isOrganizer();
+        isAuthorized();
 
         boolean removed = staffMember.removeRole(role);
         if (removed) {
@@ -78,7 +78,7 @@ public class StaffMemberManager {
     }
 
     public boolean removeJobs(StaffMember staffMember, StaffMember.Role role, Set<String> jobs) throws UseCaseLogicException {
-        isOrganizer();
+        isAuthorized();
 
         boolean removed = staffMember.removeJobs(role, jobs);
         if (removed) {
@@ -88,7 +88,7 @@ public class StaffMemberManager {
     }
 
     public void changeEmploymentType(StaffMember staffMember, StaffMember.EmploymentType employmentType) throws UseCaseLogicException {
-        isOrganizer();
+        isAuthorized();
 
         if (employmentType == StaffMember.EmploymentType.PERMANENTE &&
             !currentStaffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
