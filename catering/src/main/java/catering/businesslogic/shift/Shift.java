@@ -1,6 +1,7 @@
 package catering.businesslogic.shift;
 
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.PersistenceManager;
 import catering.persistence.ResultHandler;
 import catering.util.LogManager;
@@ -61,8 +62,6 @@ public class Shift {
         String query = "SELECT * FROM Shifts";
         ArrayList<Shift> shiftArrayList = new ArrayList<>();
 
-        LOGGER.info("Loading all shifts from database");
-
         PersistenceManager.executeQuery(query, new ResultHandler() {
             @Override
             public void handle(ResultSet rs) throws SQLException {
@@ -108,7 +107,6 @@ public class Shift {
                 return 0;
         });
 
-        LOGGER.info("Loaded " + shiftArrayList.size() + " shifts");
         return shiftArrayList;
     }
 
@@ -166,10 +164,8 @@ public class Shift {
             @Override
             public void handle(ResultSet rs) throws SQLException {
                 int userId = rs.getInt("staff_member_id");
-                StaffMember staffMember = StaffMember.load(userId);
-                if (staffMember != null) {
-                    bookings.put(userId, staffMember);
-                }
+                StaffMember staffMember = StaffMemberDAO.loadById(userId);
+                bookings.put(userId, staffMember);
             }
         }, s.id); // Pass s.id as parameter
 

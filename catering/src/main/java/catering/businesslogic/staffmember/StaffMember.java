@@ -1,35 +1,39 @@
 package catering.businesslogic.staffmember;
 
-import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
-import catering.util.DateUtils;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 @Data
 @NoArgsConstructor
 public class StaffMember {
     public enum Role {
-        CUOCO("c"),
-        CHEF("h"),
-        ORGANIZZATORE("o"),
-        SERVIZIO("s"),
-        PROPRIETARIO("p");
+        CUOCO,
+        CHEF,
+        ORGANIZZATORE,
+        SERVIZIO,
+        PROPRIETARIO;
 
-        private final String roleStringId;
-
-        Role(String roleStringId) {
-            this.roleStringId = roleStringId;
+        public int getRoleId() {
+            switch (this) {
+                case CUOCO:
+                    return 0;
+                case CHEF:
+                    return 1;
+                case ORGANIZZATORE:
+                    return 2;
+                case SERVIZIO:
+                    return 3;
+                case PROPRIETARIO:
+                    return 4;
+                default:
+                    throw new IllegalArgumentException("Unknown role");
+            }
         }
 
         @Override
         public String toString() {
-            return roleStringId;
+            return name();  // or return a friendly string
         }
     }
 
@@ -72,8 +76,12 @@ public class StaffMember {
         return new HashMap<Role, Set<String>>(this.roles);
     }
 
+    public Map<Role, Set<String>> getInternalRolesMap() {
+        return this.roles;
+    }
+
     // BUSINESS LOGIC METHODS
-    
+
     public boolean hasRole(Role role) {
         return this.roles.containsKey(role);
     }
@@ -89,7 +97,7 @@ public class StaffMember {
     public boolean removeJobs(Role role, Set<String> jobs) {
         return this.roles.get(role) != null && this.roles.get(role).removeAll(jobs);
     }
-    
+
     public void changeEmploymentType(EmploymentType employmentType) {
         this.employmentType = employmentType;
     }
@@ -116,7 +124,7 @@ public class StaffMember {
 
         return sb.toString();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -134,7 +142,7 @@ public class StaffMember {
         // Otherwise, if either ID is 0, compare by email
         return this.email != null && this.email.equals(other.email);
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -149,242 +157,5 @@ public class StaffMember {
         }
 
         return result;
-    }
-    
-    // PERSISTENCE METHODS
-
-    /**
-     * Loads a staff member by ID from the database
-     * @param uid The user ID to load
-     * @return StaffMember object with data from database
-     */
-    public static StaffMember load(int uid) {
-        StaffMember staff = new StaffMember();
-        String query = "SELECT * FROM StaffMembers WHERE id = ?";
-
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                staff.id = rs.getInt("id");
-                staff.email = rs.getString("email");
-                staff.name = rs.getString("name");
-                staff.surname = rs.getString("surname");
-                staff.dateOfBirth = DateUtils.getDateFromResultSet(rs, "dateOfBirth");
-                staff.address = rs.getString("address");
-                staff.phone = rs.getString("phone");
-                staff.wage = rs.getInt("wage");
-                staff.employmentType = rs.getInt("employmentType_id") == 0 ? EmploymentType.PERMANENTE : EmploymentType.OCCASIONALE;
-            }
-        }, uid);
-
-        if (staff.id > 0)
-            loadRolesForStaffMember(staff);
-
-        return staff;
-    }
-
-    /**
-     * Loads a staff member by email from the database
-     * @param email The email to load
-     * @return StaffMember object with data from database
-     */
-    public static StaffMember load(String email) {
-        StaffMember staff = new StaffMember();
-        String userQuery = "SELECT * FROM StaffMembers WHERE email = ?";
-
-        PersistenceManager.executeQuery(userQuery, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                staff.id = rs.getInt("id");
-                staff.email = rs.getString("email");
-                staff.name = rs.getString("name");
-                staff.surname = rs.getString("surname");
-                staff.dateOfBirth = DateUtils.getDateFromResultSet(rs, "dateOfBirth");
-                staff.address = rs.getString("address");
-                staff.phone = rs.getString("phone");
-                staff.wage = rs.getInt("wage");
-                staff.employmentType = rs.getInt("employmentType_id") == 0 ? EmploymentType.PERMANENTE : EmploymentType.OCCASIONALE;
-            }
-        }, email);
-
-        if (staff.id > 0)
-            loadRolesForStaffMember(staff);
-
-        return staff;
-    }
-
-    /**
-     * Loads all staff members from the database
-     * @return ArrayList of all StaffMember objects
-     */
-    public static ArrayList<StaffMember> loadAllStaffMembers() {
-        String userQuery = "SELECT * FROM StaffMembers";
-        ArrayList<StaffMember> staffMembers = new ArrayList<>();
-
-        PersistenceManager.executeQuery(userQuery, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                StaffMember staff = new StaffMember();
-
-                staff.id = rs.getInt("id");
-                staff.email = rs.getString("email");
-                staff.name = rs.getString("name");
-                staff.surname = rs.getString("surname");
-                staff.dateOfBirth = DateUtils.getDateFromResultSet(rs, "dateOfBirth");
-                staff.address = rs.getString("address");
-                staff.phone = rs.getString("phone");
-                staff.wage = rs.getInt("wage");
-                staff.employmentType = rs.getInt("employmentType_id") == 0 ? EmploymentType.PERMANENTE : EmploymentType.OCCASIONALE;
-
-                // Load roles for this user
-                loadRolesForStaffMember(staff);
-                staffMembers.add(staff);
-            }
-        });
-
-        return staffMembers;
-    }
-
-    /**
-     * Helper method to load roles for a staff member from database
-     * @param u The StaffMember to load roles for
-     */
-    private static void loadRolesForStaffMember(StaffMember u) {
-        String roleQuery = "SELECT * FROM StaffMemberRoles WHERE staff_member_id = ?";
-
-        PersistenceManager.executeQuery(roleQuery, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                int role = rs.getInt("role_id");
-                String job = rs.getString("job");
-                switch (role) {
-                    case 0:
-                        u.roles.computeIfAbsent(StaffMember.Role.CUOCO, k -> new HashSet<>()).add(job);
-                        break;
-                    case 1:
-                        u.roles.computeIfAbsent(StaffMember.Role.CHEF, k -> new HashSet<>()).add(job);
-                        break;
-                    case 2:
-                        u.roles.computeIfAbsent(StaffMember.Role.ORGANIZZATORE, k -> new HashSet<>()).add(job);
-                        break;
-                    case 3:
-                        u.roles.computeIfAbsent(StaffMember.Role.SERVIZIO, k -> new HashSet<>()).add(job);
-                        break;
-                    case 4:
-                        u.roles.computeIfAbsent(StaffMember.Role.PROPRIETARIO, k -> new HashSet<>()).add(job);
-                        break;
-                }
-            }
-        }, u.id);
-    }
-
-    /**
-     * Saves a new staff member to the database
-     * @return true if successful, false otherwise
-     */
-    public boolean save() {
-        if (id != 0)
-            return false;
-
-        String query = "INSERT INTO StaffMembers (email, name, surname, dateOfBirth, address, phone, wage, employmentType_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        PersistenceManager.executeUpdate(
-            query,
-            email,
-            name,
-            surname,
-            dateOfBirth,
-            address,
-            phone,
-            wage,
-            employmentType
-        );
-
-        id = PersistenceManager.getLastId();
-
-        if (id > 0) {
-            saveStaffMemberRoles();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Updates an existing staff member in the database
-     * @return true if successful, false otherwise
-     */
-    public boolean update() {
-        if (id == 0)
-            return false;
-
-        String query = "UPDATE StaffMembers SET email = ?, name = ?, surname = ?, dateOfBirth = ?, address = ?, phone = ?, wage = ?, employmentType_id = ? WHERE id = ?";
-
-        int rows = PersistenceManager.executeUpdate(
-            query,
-            email,
-            name,
-            surname,
-            dateOfBirth,
-            address,
-            phone,
-            wage,
-            employmentType,
-            id
-        );
-
-        saveStaffMemberRoles();
-        return rows > 0;
-    }
-
-    /**
-     * Deletes a staff member from the database
-     * @return true if successful, false otherwise
-     */
-    public boolean delete() {
-        if (id == 0)
-            return false; // Not in DB
-
-        // First delete user roles
-        String deleteRolesQuery = "DELETE FROM StaffMemberRoles WHERE staff_member_id = ?";
-        PersistenceManager.executeUpdate(deleteRolesQuery, id);
-
-        // Then delete user
-        String deleteStaffMemberQuery = "DELETE FROM StaffMembers WHERE id = ?";
-        int rows = PersistenceManager.executeUpdate(deleteStaffMemberQuery, id);
-
-        if (rows > 0) {
-            id = 0;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Saves staff member roles to the database
-     */
-    private void saveStaffMemberRoles() {
-        if (id == 0) {
-            return;
-        }
-
-        String deleteQuery = "DELETE FROM StaffMemberRoles WHERE staff_member_id = ?";
-        PersistenceManager.executeUpdate(deleteQuery, id);
-
-        for (Map.Entry<Role, Set<String>> entry : roles.entrySet()) {
-            Role role = entry.getKey();
-            Set<String> jobs = entry.getValue();
-
-            String roleId = role.roleStringId;
-
-            if (!jobs.isEmpty()) {
-                for (String jobDetail : jobs) {
-                    String insertQuery = "INSERT INTO StaffMemberRoles (staff_member_id, role_id, job) VALUES(?, ?, ?)";
-                    PersistenceManager.executeUpdate(insertQuery, id, roleId, jobDetail);
-                }
-            } else {
-                String insertQuery = "INSERT INTO StaffMemberRoles (staff_member_id, role_id) VALUES(?, ?)";
-                PersistenceManager.executeUpdate(insertQuery, id, roleId);
-            }
-        }
     }
 }

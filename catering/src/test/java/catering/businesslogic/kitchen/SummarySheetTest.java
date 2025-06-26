@@ -3,6 +3,7 @@ package catering.businesslogic.kitchen;
 import static org.junit.jupiter.api.Assertions.*;
 
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberDAO;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -45,12 +46,12 @@ public class SummarySheetTest {
 
         try {
             // Set up the chef user
-            chef = StaffMember.load("antonio.neri@example.com");
+            chef = StaffMemberDAO.loadByEmail("antonio.neri@example.com");
             assertNotNull(chef, "Chef user should be loaded");
             assertTrue(chef.hasRole(StaffMember.Role.CHEF), "Staff Member should have chef role");
 
             // Set up the cook user
-            cook = StaffMember.load("luca.verdi@example.com");
+            cook = StaffMemberDAO.loadByEmail("luca.verdi@example.com");
             assertNotNull(cook, "Cook user should be loaded");
 
             // Set up event and service

@@ -5,9 +5,11 @@ import catering.businesslogic.kitchen.KitchenTaskManager;
 import catering.businesslogic.menu.MenuManager;
 import catering.businesslogic.recipe.RecipeManager;
 import catering.businesslogic.shift.ShiftManager;
+import catering.businesslogic.staffmember.StaffMemberEventNotifier;
 import catering.businesslogic.staffmember.StaffMemberManager;
 import catering.persistence.KitchenTaskPersistence;
 import catering.persistence.MenuPersistence;
+import catering.businesslogic.staffmember.StaffMemberPersistence;
 
 public class CatERing {
     private static CatERing singleInstance;
@@ -21,27 +23,26 @@ public class CatERing {
 
     private MenuManager menuMgr;
     private RecipeManager recipeMgr;
-    private StaffMemberManager userMgr;
+    private StaffMemberManager staffMemberMgr;
     private EventManager eventMgr;
     private KitchenTaskManager kitchenTaskMgr;
     private ShiftManager shiftMgr;
 
-    private MenuPersistence menuPersistence;
-    private KitchenTaskPersistence kitchenTaskPersistence;
-
     private CatERing() {
         menuMgr = new MenuManager();
         recipeMgr = new RecipeManager();
-        userMgr = new StaffMemberManager();
+        staffMemberMgr = new StaffMemberManager();
         eventMgr = new EventManager();
         kitchenTaskMgr = new KitchenTaskManager();
-        shiftMgr = new ShiftManager(); // Add this line to initialize ShiftManager
+        shiftMgr = new ShiftManager();
 
-        menuPersistence = new MenuPersistence();
-        kitchenTaskPersistence = new KitchenTaskPersistence();
+        MenuPersistence menuPersistence = new MenuPersistence();
+        StaffMemberPersistence staffMemberPersistence = new StaffMemberPersistence();
+        KitchenTaskPersistence kitchenTaskPersistence = new KitchenTaskPersistence();
 
         menuMgr.addEventReceiver(menuPersistence);
         kitchenTaskMgr.addEventReceiver(kitchenTaskPersistence);
+        StaffMemberEventNotifier.registerReceiver(staffMemberPersistence);
     }
 
     public static void main(String[] args) {
@@ -89,11 +90,11 @@ public class CatERing {
     }
 
     public StaffMemberManager getStaffMemberManager() {
-        return userMgr;
+        return staffMemberMgr;
     }
 
     public void setStaffMemberManager(StaffMemberManager userMgr) {
-        this.userMgr = userMgr;
+        this.staffMemberMgr = userMgr;
     }
 
     public EventManager getEventManager() {

@@ -9,6 +9,7 @@ import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.event.Service;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;
 import catering.persistence.ResultHandler;
@@ -118,7 +119,7 @@ public class SummarySheet {
         for (int i = 0; i < summarySheets.size(); i++) {
             SummarySheet s = summarySheets.get(i);
             s.service = Service.loadById(serviceIds.get(i));
-            s.owner = StaffMember.load(ownerIds.get(i));
+            s.owner = StaffMemberDAO.loadById(ownerIds.get(i));
             s.taskList = KitchenTask.loadAllTasksBySumSheetId(s.id);
             s.assignmentList = Assignment.loadAllAssignmentsBySumSheetId(s.id);
         }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;
 import catering.persistence.ResultHandler;
@@ -104,7 +105,7 @@ public class Assignment {
 
         for (int i = 0; i < shiftIds.size(); i++) {
             Assignment a = assignments.get(i);
-            a.cook = StaffMember.load(cookIds.get(i));
+            a.cook = StaffMemberDAO.loadById(cookIds.get(i));
             a.task = KitchenTask.loadTaskById(taskIds.get(i));
             a.shift = Shift.loadItemById(shiftIds.get(i));
 

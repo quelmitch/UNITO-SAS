@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.PersistenceManager;
 import catering.persistence.ResultHandler;
 import catering.util.DateUtils;
@@ -80,7 +81,7 @@ public class Event {
     }
 
     public void setChefId(int chefId) {
-        this.chef = StaffMember.load(chefId);
+        this.chef = StaffMemberDAO.loadById(chefId);
     }
 
     public ArrayList<Service> getServices() {
@@ -169,7 +170,7 @@ public class Event {
                 e.name = rs.getString("name");
                 e.dateStart = DateUtils.getDateFromResultSet(rs, "date_start");
                 e.dateEnd = DateUtils.getDateFromResultSet(rs, "date_end");
-                e.chef = StaffMember.load(rs.getInt("chef_id"));
+                e.chef = StaffMemberDAO.loadById(rs.getInt("chef_id"));
                 events.add(e);
             }
         });
@@ -208,7 +209,7 @@ public class Event {
                 e.dateEnd = DateUtils.getDateFromResultSet(rs, "date_end");
 
                 try {
-                    e.chef = StaffMember.load(rs.getInt("chef_id"));
+                    e.chef = StaffMemberDAO.loadById(rs.getInt("chef_id"));
                 } catch (Exception ex) {
                     e.chef = null;
                 }

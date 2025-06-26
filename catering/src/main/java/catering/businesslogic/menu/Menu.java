@@ -10,10 +10,13 @@ import java.util.Map;
 import catering.businesslogic.recipe.KitchenProcess;
 import catering.businesslogic.recipe.Recipe;
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;
 import catering.persistence.ResultHandler;
+import lombok.Data;
 
+@Data
 public class Menu {
 
     // Feature constants
@@ -83,7 +86,7 @@ public class Menu {
                 m.id = id;
                 m.title = rs.getString("title");
                 m.published = rs.getBoolean("published");
-                m.owner = StaffMember.load(rs.getInt("owner_id"));
+                m.owner = StaffMemberDAO.loadById(rs.getInt("owner_id"));
 
                 // Load sections
                 m.sections = Section.loadSections(id);
@@ -309,9 +312,6 @@ public class Menu {
         return this.sections.indexOf(sec);
     }
 
-    public ArrayList<Section> getSections() {
-        return this.sections;
-    }
 
     public void moveSection(Section sec, int position) {
         sections.remove(sec);
@@ -337,10 +337,6 @@ public class Menu {
             this.freeItems.add(mi);
         }
         return mi;
-    }
-
-    public ArrayList<MenuItem> getFreeItems() {
-        return this.freeItems;
     }
 
     public int getFreeItemPosition(MenuItem mi) {
@@ -500,40 +496,6 @@ public class Menu {
 
     public boolean requiresKitchenPreparation() {
         return needsKitchen() || needsCook() || hasWarmDishes();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    // ===== BASIC GETTERS AND SETTERS =====
-
-    public StaffMember getOwner() {
-        return this.owner;
-    }
-
-    public void setOwner(StaffMember owner) {
-        this.owner = owner;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public boolean isPublished() {
-        return published;
-    }
-
-    public void setPublished(boolean published) {
-        this.published = published;
-    }
-
-    public boolean isInUse() {
-        return this.inUse;
     }
 
     public boolean isOwner(StaffMember u) {
