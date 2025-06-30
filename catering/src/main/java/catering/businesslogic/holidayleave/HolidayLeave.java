@@ -12,7 +12,7 @@ public class HolidayLeave {
     private int staffMemberId;
     private Date startDate;
     private Date endDate;
-    boolean accepted = false;
+    // boolean accepted = false;
 
     public HolidayLeave(int staffMemberId, Date startDate, Date endDate) {
         this.staffMemberId = staffMemberId;
@@ -56,17 +56,5 @@ public class HolidayLeave {
         }, uid);
 
         return leaves;
-    }
-
-    public void save() {
-        String query = "INSERT INTO HolidayLeave (staff_member_id, start_date, end_date, accepted) VALUES (?, ?, ?, ?)";
-
-        PersistenceManager.executeUpdate(query, staffMemberId, startDate, endDate, accepted);
-    }
-
-    public void update() {
-        String query = "UPDATE HolidayLeave SET accepted = ? WHERE staff_member_id = ?";
-
-        PersistenceManager.executeUpdate(query, startDate, endDate, accepted, staffMemberId);
     }
 }

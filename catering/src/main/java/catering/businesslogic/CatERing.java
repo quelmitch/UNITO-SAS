@@ -1,6 +1,7 @@
 package catering.businesslogic;
 
 import catering.businesslogic.event.EventManager;
+import catering.businesslogic.holidayleave.HolidayLeaveManager;
 import catering.businesslogic.kitchen.KitchenTaskManager;
 import catering.businesslogic.menu.MenuManager;
 import catering.businesslogic.recipe.RecipeManager;
@@ -27,6 +28,7 @@ public class CatERing {
     private EventManager eventMgr;
     private KitchenTaskManager kitchenTaskMgr;
     private ShiftManager shiftMgr;
+    private HolidayLeaveManager holidayLeaveMgr;
 
     private CatERing() {
         menuMgr = new MenuManager();
@@ -37,12 +39,12 @@ public class CatERing {
         shiftMgr = new ShiftManager();
 
         MenuPersistence menuPersistence = new MenuPersistence();
-        StaffMemberPersistence staffMemberPersistence = new StaffMemberPersistence();
         KitchenTaskPersistence kitchenTaskPersistence = new KitchenTaskPersistence();
 
         menuMgr.addEventReceiver(menuPersistence);
         kitchenTaskMgr.addEventReceiver(kitchenTaskPersistence);
-        StaffMemberEventNotifier.registerReceiver(staffMemberPersistence);
+        StaffMemberEventNotifier.registerReceiver(new StaffMemberPersistence());
+        // HolidayLeaveEventNotifier.registerReceiver(new HolidayLeavePersistence());
     }
 
     public static void main(String[] args) {
