@@ -3,9 +3,10 @@ package catering.businesslogic.kitchen;
 import java.util.ArrayList;
 
 import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
-import catering.businesslogic.event.Event;
-import catering.businesslogic.event.Service;
+import catering.exceptions.SummarySheetException;
+import catering.exceptions.UseCaseLogicException;
+import catering.businesslogic.event.mainevent.Event;
+import catering.businesslogic.event.service.Service;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.staffmember.StaffMember;
 

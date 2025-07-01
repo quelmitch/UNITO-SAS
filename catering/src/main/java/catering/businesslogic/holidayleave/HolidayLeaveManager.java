@@ -1,6 +1,6 @@
 package catering.businesslogic.holidayleave;
 
-import catering.businesslogic.UseCaseLogicException;
+import catering.exceptions.UseCaseLogicException;
 import catering.businesslogic.staffmember.StaffMember;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.util.DateUtils;
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 @Data
 public class HolidayLeaveManager {
-    private static final Logger LOGGER = LogManager.getLogger(HolidayLeaveManager.class);
+    private final Logger Logger = LogManager.getLogger(HolidayLeaveManager.class);
 
     private StaffMember currentStaffMember;
 

@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import catering.businesslogic.UseCaseLogicException;
-import catering.businesslogic.event.Service;
+import catering.exceptions.SummarySheetException;
+import catering.exceptions.UseCaseLogicException;
+import catering.businesslogic.event.service.Service;
+import catering.businesslogic.event.service.ServiceDAO;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.staffmember.StaffMember;
 import catering.businesslogic.staffmember.StaffMemberDAO;
@@ -118,7 +120,7 @@ public class SummarySheet {
         // Load services, owners, tasks, and assignments for each sheet
         for (int i = 0; i < summarySheets.size(); i++) {
             SummarySheet s = summarySheets.get(i);
-            s.service = Service.loadById(serviceIds.get(i));
+            s.service = ServiceDAO.loadById(serviceIds.get(i));
             s.owner = StaffMemberDAO.loadById(ownerIds.get(i));
             s.taskList = KitchenTask.loadAllTasksBySumSheetId(s.id);
             s.assignmentList = Assignment.loadAllAssignmentsBySumSheetId(s.id);

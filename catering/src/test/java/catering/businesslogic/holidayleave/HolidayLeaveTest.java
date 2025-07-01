@@ -1,8 +1,9 @@
 package catering.businesslogic.holidayleave;
 
 import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
+import catering.exceptions.UseCaseLogicException;
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberCreationTest;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.PersistenceManager;
 import catering.util.DateUtils;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HolidayLeaveTest {
-    private static final Logger LOGGER = LogManager.getLogger(HolidayLeaveTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(StaffMemberCreationTest.class);
 
     private static CatERing app;
     private static StaffMember organizer;
@@ -27,6 +28,7 @@ public class HolidayLeaveTest {
     static void init() {
         PersistenceManager.initializeDatabase("database/catering_init_sqlite.sql");
         app = CatERing.getInstance();
+
         LOGGER.info("Starting test: HolidayLeaveTest");
     }
 

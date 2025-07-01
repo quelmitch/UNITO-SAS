@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import catering.businesslogic.UseCaseLogicException;
+import catering.exceptions.UseCaseLogicException;
 import catering.util.LogManager;
 import lombok.Data;
 
@@ -13,12 +13,6 @@ public class StaffMemberManager {
     private static Logger LOGGER = LogManager.getLogger(StaffMemberManager.class);
 
     private StaffMember currentStaffMember;
-
-    private void isAuthorized() throws UseCaseLogicException {
-        if (!currentStaffMember.hasRole(StaffMember.Role.ORGANIZZATORE) && !currentStaffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
-            throw new UseCaseLogicException("User must be authorized");
-        }
-    }
 
     public void fakeLogin(String email) throws UseCaseLogicException {
         this.currentStaffMember = StaffMemberDAO.loadByEmail(email);
@@ -103,5 +97,13 @@ public class StaffMemberManager {
 
         StaffMemberDAO.update(staffMember);
         StaffMemberEventNotifier.notifyUpdated(staffMember);
+    }
+
+
+    // HELPERS
+    private void isAuthorized() throws UseCaseLogicException {
+        if (!currentStaffMember.hasRole(StaffMember.Role.ORGANIZZATORE) && !currentStaffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
+            throw new UseCaseLogicException("User must be authorized");
+        }
     }
 }

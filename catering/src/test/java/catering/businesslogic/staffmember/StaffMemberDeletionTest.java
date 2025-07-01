@@ -1,7 +1,7 @@
 package catering.businesslogic.staffmember;
 
 import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
+import catering.exceptions.UseCaseLogicException;
 import catering.persistence.PersistenceManager;
 import catering.util.DateUtils;
 import catering.util.LogManager;
@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StaffMemberDeletionTest {
     private static final Logger LOGGER = LogManager.getLogger(StaffMemberCreationTest.class);
-
     private static CatERing app;
     private static StaffMember organizer;
 

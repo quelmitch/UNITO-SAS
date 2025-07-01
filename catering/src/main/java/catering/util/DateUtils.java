@@ -7,79 +7,92 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Utility class for date handling in the catering application
+ * Utility class for handling Date conversions in the catering application.
  */
 public class DateUtils {
     private static final Logger LOGGER = LogManager.getLogger(DateUtils.class);
 
     /**
-     * Safely converts a SQLite Unix timestamp to a java.sql.Date
-     * 
+     * Extracts a java.sql.Date from a ResultSet column, interpreting the column as a Unix timestamp
+     * or string representation of the timestamp.
+     *
      * @param rs         ResultSet to read from
-     * @param columnName Name of the column containing the timestamp
-     * @return A java.sql.Date object or null if conversion fails
+     * @param columnName Name of the column containing the date/timestamp
+     * @return java.sql.Date instance or null if the value is NULL or invalid
      */
     public static Date getDateFromResultSet(ResultSet rs, String columnName) {
         try {
-            // First try getting as a long (most efficient)
             long timestamp = rs.getLong(columnName);
-
-            // Check if the field was NULL in the database
             if (rs.wasNull()) {
-                LOGGER.fine(columnName + " is NULL in database");
+                LOGGER.fine(() -> columnName + " is NULL in database");
                 return null;
             }
-
-            // Return the date if we got a valid timestamp
-            if (timestamp > 0) {
-                Date date = new Date(timestamp);
-                LOGGER.fine("Successfully parsed " + columnName + " timestamp " + timestamp + " to date: " + date);
+            Date date = parseTimestampToDate(timestamp);
+            if (date != null) {
+                LOGGER.fine(() -> "Parsed " + columnName + " from timestamp " + timestamp + " to date: " + date);
                 return date;
-            } else {
-                LOGGER.fine(columnName + " timestamp is zero or negative: " + timestamp);
             }
 
-            // Try string parsing as fallback
+            // Fallback: try to parse as string
             String dateStr = rs.getString(columnName);
             if (dateStr != null && !dateStr.isEmpty()) {
-                try {
-                    timestamp = Long.parseLong(dateStr);
-                    Date date = new Date(timestamp);
-                    LOGGER.fine("Successfully parsed " + columnName + " string " + dateStr + " to date: " + date);
-                    return date;
-                } catch (NumberFormatException ex) {
-                    LOGGER.warning("Invalid Unix timestamp in column " + columnName + ": " + dateStr);
-                }
+                return parseStringToDate(columnName, dateStr);
             }
+
         } catch (SQLException ex) {
-            LOGGER.log(Level.WARNING, "Error retrieving Unix timestamp from column " + columnName, ex);
+            LOGGER.log(Level.WARNING, "SQLException while reading column " + columnName, ex);
         }
         return null;
     }
 
     /**
-     * Safely converts any text representation to a java.sql.Date
-     * 
-     * @param dateStr The date string to convert
-     * @return A java.sql.Date or null if conversion fails
+     * Safely converts a String representation of a date into java.sql.Date.
+     * Supports SQL date format (yyyy-[m]m-[d]d) or a Unix timestamp string.
+     *
+     * @param dateStr date string to parse
+     * @return java.sql.Date instance or null if input is null/empty or invalid format
      */
     public static Date safeValueOf(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) {
             return null;
         }
+        return parseStringToDate("Input", dateStr);
+    }
 
-        try {
-            // Try standard SQL date format
-            return Date.valueOf(dateStr);
-        } catch (IllegalArgumentException ex) {
-            try {
-                // Try parsing as timestamp
-                long timestamp = Long.parseLong(dateStr);
-                return new Date(timestamp);
-            } catch (NumberFormatException nfe) {
-                LOGGER.warning("Failed to parse date string: " + dateStr);
-                return null;
-            }
+
+    // HELPERS
+
+    /**
+     * Attempts to parse a Unix timestamp into a java.sql.Date, returns null if timestamp invalid.
+     */
+    private static Date parseTimestampToDate(long timestamp) {
+        if (timestamp > 0) {
+            return new Date(timestamp);
         }
+        return null;
+    }
+
+    /**
+     * Attempts to parse a string either as SQL date format or Unix timestamp.
+     * Logs warnings on failure.
+     */
+    private static Date parseStringToDate(String sourceName, String dateStr) {
+        // Try SQL date format first
+        try {
+            return Date.valueOf(dateStr);
+        } catch (Exception ignored) {}
+
+        // Try parsing as Unix timestamp string
+        try {
+            long timestamp = Long.parseLong(dateStr);
+            Date date = parseTimestampToDate(timestamp);
+            if (date != null)
+                return date;
+        } catch (NumberFormatException ex) {
+            LOGGER.warning(() -> "Invalid Unix timestamp in " + sourceName + ": '" + dateStr + "'");
+        }
+
+        LOGGER.warning(() -> "Failed to parse date string from " + sourceName + ": '" + dateStr + "'");
+        return null;
     }
 }

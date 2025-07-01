@@ -1,4 +1,4 @@
-package catering.businesslogic;
+package catering.exceptions;
 
 public class UseCaseLogicException extends Exception {
 

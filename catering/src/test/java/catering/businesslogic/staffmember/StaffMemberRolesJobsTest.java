@@ -1,7 +1,6 @@
 package catering.businesslogic.staffmember;
 
-import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
+import catering.exceptions.UseCaseLogicException;
 import catering.persistence.PersistenceManager;
 import catering.util.LogManager;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StaffMemberRolesJobsTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(StaffMemberRolesJobsTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(StaffMemberCreationTest.class);
 
     private static StaffMemberManager manager;
     private static StaffMember target;

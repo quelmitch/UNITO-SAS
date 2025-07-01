@@ -3,7 +3,8 @@ package catering.businesslogic.menu;
 import java.util.ArrayList;
 
 import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
+import catering.exceptions.MenuException;
+import catering.exceptions.UseCaseLogicException;
 import catering.businesslogic.recipe.Recipe;
 import catering.businesslogic.staffmember.StaffMember;
 

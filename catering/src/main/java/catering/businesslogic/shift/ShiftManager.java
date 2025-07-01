@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * booking.
  */
 public class ShiftManager {
-    private static final Logger LOGGER = LogManager.getLogger(ShiftManager.class);
+    private final static Logger LOGGER = LogManager.getLogger(ShiftManager.class);
 
     /**
      * Constructor initializes by loading all shifts

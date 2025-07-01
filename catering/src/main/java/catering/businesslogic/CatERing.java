@@ -1,6 +1,6 @@
 package catering.businesslogic;
 
-import catering.businesslogic.event.EventManager;
+import catering.businesslogic.event.mainevent.EventManager;
 import catering.businesslogic.holidayleave.HolidayLeaveEventNotifier;
 import catering.businesslogic.holidayleave.HolidayLeaveManager;
 import catering.businesslogic.holidayleave.HolidayLeavePersistence;
@@ -12,6 +12,8 @@ import catering.businesslogic.staffmember.StaffMemberManager;
 import catering.persistence.KitchenTaskPersistence;
 import catering.persistence.MenuPersistence;
 import lombok.Data;
+
+import java.util.logging.Logger;
 
 @Data
 public class CatERing {
@@ -32,8 +34,14 @@ public class CatERing {
     private HolidayLeaveManager holidayLeaveManager;
 
     private CatERing() {
+        initializeLogger();
         initializeManagers();
         registerPersistenceHandlers();
+    }
+
+    private void initializeLogger() {
+        Logger logger = catering.util.LogManager.getLogger(CatERing.class);
+        logger.info("Application started");
     }
 
     private void initializeManagers() {

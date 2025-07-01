@@ -1,12 +1,9 @@
-package catering.businesslogic.event;
+package catering.businesslogic.event.mainevent;
 
+import catering.businesslogic.event.service.Service;
 import catering.businesslogic.menu.Menu;
 
-/**
- * Interface for receiving event-related notifications.
- * Implemented by classes that need to respond to event changes.
- */
-public interface EventReceiver {
+public interface EventEventReceiver {
 
     void updateEventCreated(Event event);
 

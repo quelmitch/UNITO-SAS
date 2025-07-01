@@ -1,4 +1,4 @@
-package catering.businesslogic.menu;
+package catering.exceptions;
 
 public class MenuException extends Exception {
 }

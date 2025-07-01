@@ -2,7 +2,10 @@ package catering.businesslogic.kitchen;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import catering.businesslogic.event.mainevent.EventDAO;
+import catering.businesslogic.event.service.ServiceDAO;
 import catering.businesslogic.staffmember.StaffMember;
+import catering.businesslogic.staffmember.StaffMemberCreationTest;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -17,9 +20,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
-import catering.businesslogic.event.Event;
-import catering.businesslogic.event.Service;
+import catering.exceptions.UseCaseLogicException;
+import catering.businesslogic.event.mainevent.Event;
+import catering.businesslogic.event.service.Service;
 import catering.businesslogic.shift.Shift;
 import catering.persistence.PersistenceManager;
 import catering.util.LogManager;
@@ -27,7 +30,7 @@ import catering.util.LogManager;
 @TestMethodOrder(OrderAnnotation.class)
 public class SummarySheetTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(SummarySheetTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(StaffMemberCreationTest.class);
 
     private static CatERing app;
     private static StaffMember chef;
@@ -55,10 +58,10 @@ public class SummarySheetTest {
             assertNotNull(cook, "Cook user should be loaded");
 
             // Set up event and service
-            testEvent = Event.loadByName("Gala Aziendale Annuale");
+            testEvent = EventDAO.loadByName("Gala Aziendale Annuale");
             assertNotNull(testEvent, "Test event should be loaded");
 
-            testService = Service.loadByName("Pranzo Buffet Aziendale");
+            testService = ServiceDAO.loadByName("Pranzo Buffet Aziendale");
             assertNotNull(testService, "Test service should be loaded");
 
             // Login as chef
