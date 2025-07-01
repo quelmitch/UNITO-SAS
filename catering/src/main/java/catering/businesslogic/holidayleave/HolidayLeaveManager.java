@@ -3,6 +3,7 @@ package catering.businesslogic.holidayleave;
 import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.staffmember.StaffMember;
 import catering.businesslogic.staffmember.StaffMemberDAO;
+import catering.util.DateUtils;
 import catering.util.LogManager;
 import lombok.Data;
 
@@ -35,7 +36,7 @@ public class HolidayLeaveManager {
             throw new UseCaseLogicException("Invalid date range");
         }
 
-        HolidayLeave leave = new HolidayLeave(currentStaffMember, (java.sql.Date) startDate, (java.sql.Date) endDate, HolidayLeave.RequestStatus.IN_ATTESA);
+        HolidayLeave leave = new HolidayLeave(currentStaffMember, DateUtils.safeValueOf(String.valueOf(startDate)), DateUtils.safeValueOf(String.valueOf(endDate)), HolidayLeave.RequestStatus.IN_ATTESA);
         HolidayLeaveEventNotifier.notifyHolidayLeaveCreated(leave);
 
         return leave;

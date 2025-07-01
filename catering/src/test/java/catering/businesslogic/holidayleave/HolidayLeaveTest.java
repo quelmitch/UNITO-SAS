@@ -20,25 +20,34 @@ public class HolidayLeaveTest {
 
     private static CatERing app;
     private static StaffMember organizer;
+    private static StaffMember nonOrganizer;
+    private static StaffMember owner;
 
     @BeforeAll
     static void init() {
         PersistenceManager.initializeDatabase("database/catering_init_sqlite.sql");
         app = CatERing.getInstance();
-
         LOGGER.info("Starting test: HolidayLeaveTest");
     }
 
     @BeforeEach
     void setup() {
         organizer = StaffMemberDAO.loadByEmail("giovanni.ricci@example.com");
+        nonOrganizer = StaffMemberDAO.loadByEmail("luca.verdi@example.com");
+        owner = StaffMemberDAO.loadByEmail("chiara.bruni@example.com");
+
         assertNotNull(organizer);
+        assertNotNull(nonOrganizer);
+        assertNotNull(owner);
+
         assertTrue(organizer.hasRole(StaffMember.Role.ORGANIZZATORE));
+        assertFalse(nonOrganizer.hasRole(StaffMember.Role.ORGANIZZATORE));
+        assertTrue(owner.hasRole(StaffMember.Role.PROPRIETARIO));
     }
 
     @Test
-    void requestHolidayLeaveByOrganizer() throws UseCaseLogicException {
-        app.getHolidayLeaveManager().fakeLogin(organizer.getEmail());
+    void requestHolidayLeaveByAnyStaffMember() throws UseCaseLogicException {
+        app.getHolidayLeaveManager().fakeLogin(nonOrganizer.getEmail());
 
         HolidayLeave leave = app.getHolidayLeaveManager().requestHolidayLeave(
                 DateUtils.safeValueOf("2025-08-01"),
@@ -54,41 +63,54 @@ public class HolidayLeaveTest {
     }
 
     @Test
-    void approveHolidayLeave() throws UseCaseLogicException {
-        app.getHolidayLeaveManager().fakeLogin(organizer.getEmail());
-
+    void approveHolidayLeaveByOrganizer() throws UseCaseLogicException {
+        app.getHolidayLeaveManager().fakeLogin(nonOrganizer.getEmail());
         HolidayLeave leave = app.getHolidayLeaveManager().requestHolidayLeave(
                 DateUtils.safeValueOf("2025-09-01"),
                 DateUtils.safeValueOf("2025-09-05")
         );
 
+        app.getHolidayLeaveManager().fakeLogin(organizer.getEmail());
         app.getHolidayLeaveManager().approveLeave(leave);
+
         assertEquals(HolidayLeave.RequestStatus.ACCETTATA, leave.getStatus());
 
         HolidayLeave reloaded = HolidayLeaveDAO.loadById(leave.getId());
-        assertEquals(HolidayLeave.RequestStatus.ACCETTATA, reloaded.getStatus());
+        assertEquals(HolidayLeave.RequestStatus.ACCETTATA, reloaded != null ? reloaded.getStatus() : null);
     }
 
     @Test
-    void denyHolidayLeave() throws UseCaseLogicException {
-        app.getHolidayLeaveManager().fakeLogin(organizer.getEmail());
-
+    void rejectHolidayLeaveByOwner() throws UseCaseLogicException {
+        app.getHolidayLeaveManager().fakeLogin(nonOrganizer.getEmail());
         HolidayLeave leave = app.getHolidayLeaveManager().requestHolidayLeave(
                 DateUtils.safeValueOf("2025-10-01"),
                 DateUtils.safeValueOf("2025-10-05")
         );
 
+        app.getHolidayLeaveManager().fakeLogin(owner.getEmail());
         app.getHolidayLeaveManager().rejectLeave(leave);
+
         assertEquals(HolidayLeave.RequestStatus.RIFIUTATA, leave.getStatus());
 
         HolidayLeave reloaded = HolidayLeaveDAO.loadById(leave.getId());
-        assertEquals(HolidayLeave.RequestStatus.RIFIUTATA, reloaded.getStatus());
+        assertEquals(HolidayLeave.RequestStatus.RIFIUTATA, reloaded != null ? reloaded.getStatus() : null);
     }
 
     @Test
-    void deleteHolidayLeave() throws UseCaseLogicException {
-        app.getHolidayLeaveManager().fakeLogin(organizer.getEmail());
+    void unauthorizedApprovalShouldFail() {
+        assertThrows(UseCaseLogicException.class, () -> {
+            app.getHolidayLeaveManager().fakeLogin(nonOrganizer.getEmail());
+            HolidayLeave leave = app.getHolidayLeaveManager().requestHolidayLeave(
+                    DateUtils.safeValueOf("2025-11-01"),
+                    DateUtils.safeValueOf("2025-11-05")
+            );
+            app.getHolidayLeaveManager().approveLeave(leave);
+        });
+    }
 
+    @Test
+    void deleteHolidayLeaveByRequester() throws UseCaseLogicException {
+        app.getHolidayLeaveManager().fakeLogin(nonOrganizer.getEmail());
         HolidayLeave leave = app.getHolidayLeaveManager().requestHolidayLeave(
                 DateUtils.safeValueOf("2025-12-01"),
                 DateUtils.safeValueOf("2025-12-10")
