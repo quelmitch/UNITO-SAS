@@ -1,60 +1,68 @@
 package catering.businesslogic.holidayleave;
 
-import catering.persistence.PersistenceManager;
+import catering.businesslogic.staffmember.StaffMember;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class HolidayLeave {
-    private int staffMemberId;
+
+    public enum RequestStatus {
+        ACCETTATA,
+        RIFIUTATA,
+        IN_ATTESA
+    }
+
+    private int id;
+    private StaffMember staffMember;
     private Date startDate;
     private Date endDate;
-    // boolean accepted = false;
+    private RequestStatus status = RequestStatus.IN_ATTESA;
 
-    public HolidayLeave(int staffMemberId, Date startDate, Date endDate) {
-        this.staffMemberId = staffMemberId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+    public void accept() {
+        this.status = RequestStatus.ACCETTATA;
     }
 
-    public static List<HolidayLeave> load() {
-        List<HolidayLeave> leaves = new ArrayList<>();
-
-        String query = "SELECT * FROM HolidayLeave";
-
-        PersistenceManager.executeQuery(query, rs -> {
-            int staffMemberId = rs.getInt("staff_member_id");
-            Date startDate = rs.getDate("start_date");
-            Date endDate = rs.getDate("end_date");
-            boolean accepted = rs.getBoolean("accepted");
-
-            HolidayLeave leave = new HolidayLeave(staffMemberId, startDate, endDate);
-            leave.setAccepted(accepted);
-            leaves.add(leave);
-        });
-
-        return leaves;
+    public void reject() {
+        this.status = RequestStatus.RIFIUTATA;
     }
 
-    public static List<HolidayLeave> loadByStaffMember(int uid) {
-        List<HolidayLeave> leaves = new ArrayList<>();
+    public boolean isPending() {
+        return this.status == RequestStatus.IN_ATTESA;
+    }
 
-        String query = "SELECT * FROM HolidayLeave WHERE staff_member_id = ?";
+    @Override
+    public String toString() {
+        return String.format("HolidayLeave{id=%d, staff=%s %s, from=%s to=%s, status=%s}",
+                id,
+                staffMember != null ? staffMember.getName() : "Unknown",
+                staffMember != null ? staffMember.getSurname() : "Unknown",
+                startDate,
+                endDate,
+                status
+        );
+    }
 
-        PersistenceManager.executeQuery(query, rs -> {
-            int staffMemberId = rs.getInt("staff_member_id");
-            Date startDate = rs.getDate("start_date");
-            Date endDate = rs.getDate("end_date");
-            boolean accepted = rs.getBoolean("accepted");
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
 
-            HolidayLeave leave = new HolidayLeave(staffMemberId, startDate, endDate);
-            leave.setAccepted(accepted);
-            leaves.add(leave);
-        }, uid);
+        if (!(obj instanceof HolidayLeave))
+            return false;
 
-        return leaves;
+        HolidayLeave other = (HolidayLeave) obj;
+        return id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

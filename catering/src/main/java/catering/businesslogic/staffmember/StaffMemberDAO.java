@@ -52,14 +52,14 @@ public class StaffMemberDAO {
         String query = "INSERT INTO StaffMembers (email, name, surname, dateOfBirth, address, phone, wage, employmentType_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         PersistenceManager.executeUpdate(query,
-            staff.getEmail(),
-            staff.getName(),
-            staff.getSurname(),
-            staff.getDateOfBirth(),
-            staff.getAddress(),
-            staff.getPhone(),
-            staff.getWage(),
-            staff.getEmploymentType() == EmploymentType.PERMANENTE ? 0 : 1);
+                staff.getEmail(),
+                staff.getName(),
+                staff.getSurname(),
+                staff.getDateOfBirth(),
+                staff.getAddress(),
+                staff.getPhone(),
+                staff.getWage(),
+                staff.getEmploymentType() == EmploymentType.PERMANENTE ? 0 : 1);
 
         staff.setId(PersistenceManager.getLastId());
         saveRoles(staff);
@@ -69,15 +69,15 @@ public class StaffMemberDAO {
         String query = "UPDATE StaffMembers SET email = ?, name = ?, surname = ?, dateOfBirth = ?, address = ?, phone = ?, wage = ?, employmentType_id = ? WHERE id = ?";
 
         int updated = PersistenceManager.executeUpdate(query,
-            staff.getEmail(),
-            staff.getName(),
-            staff.getSurname(),
-            staff.getDateOfBirth(),
-            staff.getAddress(),
-            staff.getPhone(),
-            staff.getWage(),
-            staff.getEmploymentType() == EmploymentType.PERMANENTE ? 0 : 1,
-            staff.getId());
+                staff.getEmail(),
+                staff.getName(),
+                staff.getSurname(),
+                staff.getDateOfBirth(),
+                staff.getAddress(),
+                staff.getPhone(),
+                staff.getWage(),
+                staff.getEmploymentType() == EmploymentType.PERMANENTE ? 0 : 1,
+                staff.getId());
 
         saveRoles(staff);
         return updated > 0;

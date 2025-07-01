@@ -62,10 +62,12 @@ CREATE TABLE
 
 CREATE TABLE
     `HolidayLeave` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `staff_member_id` INTEGER NOT NULL,
     `start_date` DATE NOT NULL,
     `end_date` DATE NOT NULL,
-    `accepted` BOOLEAN,
+    -- SQL lite does not support enum types
+    status TEXT CHECK (status IN ('ACCETTATA', 'RIFIUTATA', 'IN_ATTESA')) DEFAULT 'IN_ATTESA',
     FOREIGN KEY (`staff_member_id`) REFERENCES `StaffMembers`(`id`)
 );
 
@@ -1090,10 +1092,14 @@ INSERT INTO Services (
     'Sala Esecutiva'            -- Location in Italian
 );
 
--- ===== ADD SAMPLE HOLIDAY LEAVES REQUEST =====
+-- ==== HOLIDAY LEAVE SAMPLES ====
 
-INSERT INTO HolidayLeave (staff_member_id, start_date, end_date, accepted) VALUES
-(1, '2025-08-01', '2025-08-15', 0),
-(2, '2025-07-10', '2025-07-20', 0),
-(4, '2025-06-01', '2025-06-15', 0),
-(8, '2025-12-15', '2025-12-30', 0);
+INSERT INTO HolidayLeave (staff_member_id, start_date, end_date, status) VALUES
+(1, '2025-08-01', '2025-08-10', 'ACCETTATA'),
+(2, '2025-07-15', '2025-07-20', 'IN_ATTESA'),
+(3, '2025-12-24', '2026-01-02', 'RIFIUTATA'),
+(4, '2025-09-05', '2025-09-12', 'ACCETTATA'),
+(5, '2025-07-10', '2025-07-15', 'IN_ATTESA'),
+(6, '2025-10-01', '2025-10-05', 'ACCETTATA'),
+(7, '2025-08-20', '2025-08-30', 'RIFIUTATA'),
+(8, '2025-11-15', '2025-11-20', 'IN_ATTESA');
