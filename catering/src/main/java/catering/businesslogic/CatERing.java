@@ -16,6 +16,7 @@ import catering.businesslogic.staffmember.StaffMemberPersistence;
 import lombok.Data;
 import lombok.Getter;
 
+@Data
 public class CatERing {
     private static CatERing singleInstance;
 
@@ -26,28 +27,28 @@ public class CatERing {
         return singleInstance;
     }
 
-    private MenuManager menuMgr;
-    private RecipeManager recipeMgr;
-    private StaffMemberManager staffMemberMgr;
-    private EventManager eventMgr;
-    private KitchenTaskManager kitchenTaskMgr;
-    private ShiftManager shiftMgr;
-    private HolidayLeaveManager holidayLeaveMgr;
+    private MenuManager menuManager;
+    private RecipeManager recipeManager;
+    private StaffMemberManager staffMemberManager;
+    private EventManager eventManager;
+    private KitchenTaskManager kitchenTaskManager;
+    private ShiftManager shiftManager;
+    private HolidayLeaveManager holidayLeaveManager;
 
     private CatERing() {
-        menuMgr = new MenuManager();
-        recipeMgr = new RecipeManager();
-        staffMemberMgr = new StaffMemberManager();
-        eventMgr = new EventManager();
-        kitchenTaskMgr = new KitchenTaskManager();
-        shiftMgr = new ShiftManager();
-        holidayLeaveMgr = new HolidayLeaveManager();
+        menuManager = new MenuManager();
+        recipeManager = new RecipeManager();
+        staffMemberManager = new StaffMemberManager();
+        eventManager = new EventManager();
+        kitchenTaskManager = new KitchenTaskManager();
+        shiftManager = new ShiftManager();
+        holidayLeaveManager = new HolidayLeaveManager();
 
         MenuPersistence menuPersistence = new MenuPersistence();
         KitchenTaskPersistence kitchenTaskPersistence = new KitchenTaskPersistence();
 
-        menuMgr.addEventReceiver(menuPersistence);
-        kitchenTaskMgr.addEventReceiver(kitchenTaskPersistence);
+        menuManager.addEventReceiver(menuPersistence);
+        kitchenTaskManager.addEventReceiver(kitchenTaskPersistence);
         StaffMemberEventNotifier.registerReceiver(new StaffMemberPersistence());
         HolidayLeaveEventNotifier.registerReceiver(new HolidayLeavePersistence());
     }
@@ -67,61 +68,4 @@ public class CatERing {
         System.out.println("- Kitchen Task Manager: " + (app.getKitchenTaskManager() != null ? "OK" : "NOT AVAILABLE"));
         System.out.println("- Shift Manager: " + (app.getShiftManager() != null ? "OK" : "NOT AVAILABLE"));
     }
-
-    public KitchenTaskManager getKitchenTaskManager() {
-        return kitchenTaskMgr; // Return the field that was properly initialized
-    }
-
-    public ShiftManager getShiftManager() {
-        return shiftMgr;
-    }
-
-    public void setShiftManager(ShiftManager shiftMgr) {
-        this.shiftMgr = shiftMgr;
-    }
-
-    public MenuManager getMenuManager() {
-        return menuMgr;
-    }
-
-    public void setMenuManager(MenuManager menuMgr) {
-        this.menuMgr = menuMgr;
-    }
-
-    public RecipeManager getRecipeManager() {
-        return recipeMgr;
-    }
-
-    public void setRecipeManager(RecipeManager recipeMgr) {
-        this.recipeMgr = recipeMgr;
-    }
-
-    public StaffMemberManager getStaffMemberManager() {
-        return staffMemberMgr;
-    }
-
-    public void setStaffMemberManager(StaffMemberManager userMgr) {
-        this.staffMemberMgr = userMgr;
-    }
-
-    public EventManager getEventManager() {
-        return eventMgr;
-    }
-
-    public void setEventManager(EventManager eventMgr) {
-        this.eventMgr = eventMgr;
-    }
-
-    public HolidayLeaveManager getHolidayLeaveManager() {
-        return holidayLeaveMgr;
-    }
-
-    public void setHolidayLeaveManager(HolidayLeaveManager holidayLeaveMgr) {
-        this.holidayLeaveMgr = holidayLeaveMgr;
-    }
-
-    public void setKitchenTaskManager(KitchenTaskManager kitchenTaskMgr) {
-        this.kitchenTaskMgr = kitchenTaskMgr;
-    }
-
 }

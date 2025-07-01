@@ -20,7 +20,6 @@ public class HolidayLeaveTest {
 
     private static CatERing app;
     private static StaffMember organizer;
-    private static StaffMember notOrganizer;
 
     @BeforeAll
     static void init() {
@@ -35,10 +34,6 @@ public class HolidayLeaveTest {
         organizer = StaffMemberDAO.loadByEmail("giovanni.ricci@example.com");
         assertNotNull(organizer);
         assertTrue(organizer.hasRole(StaffMember.Role.ORGANIZZATORE));
-
-        notOrganizer = StaffMemberDAO.loadByEmail("luca.verdi@example.com");
-        assertNotNull(notOrganizer);
-        assertFalse(notOrganizer.hasRole(StaffMember.Role.ORGANIZZATORE));
     }
 
     @Test

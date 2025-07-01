@@ -72,8 +72,6 @@ public class HolidayLeaveDAO {
         return false;
     }
 
-    // Utility
-
     private static void mapHolidayLeave(ResultSet rs, HolidayLeave leave) throws SQLException {
         leave.setId(rs.getInt("id"));
         leave.setStartDate(rs.getDate("start_date"));
