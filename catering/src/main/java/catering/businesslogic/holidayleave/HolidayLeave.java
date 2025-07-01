@@ -25,6 +25,13 @@ public class HolidayLeave {
     private Date endDate;
     private RequestStatus status = RequestStatus.IN_ATTESA;
 
+    public HolidayLeave(StaffMember staffMember, Date startDate, Date endDate, RequestStatus status) {
+        this.staffMember = staffMember;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+    }
+
     public void accept() {
         this.status = RequestStatus.ACCETTATA;
     }

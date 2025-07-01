@@ -1,7 +1,9 @@
 package catering.businesslogic;
 
 import catering.businesslogic.event.EventManager;
+import catering.businesslogic.holidayleave.HolidayLeaveEventNotifier;
 import catering.businesslogic.holidayleave.HolidayLeaveManager;
+import catering.businesslogic.holidayleave.HolidayLeavePersistence;
 import catering.businesslogic.kitchen.KitchenTaskManager;
 import catering.businesslogic.menu.MenuManager;
 import catering.businesslogic.recipe.RecipeManager;
@@ -11,6 +13,8 @@ import catering.businesslogic.staffmember.StaffMemberManager;
 import catering.persistence.KitchenTaskPersistence;
 import catering.persistence.MenuPersistence;
 import catering.businesslogic.staffmember.StaffMemberPersistence;
+import lombok.Data;
+import lombok.Getter;
 
 public class CatERing {
     private static CatERing singleInstance;
@@ -37,6 +41,7 @@ public class CatERing {
         eventMgr = new EventManager();
         kitchenTaskMgr = new KitchenTaskManager();
         shiftMgr = new ShiftManager();
+        holidayLeaveMgr = new HolidayLeaveManager();
 
         MenuPersistence menuPersistence = new MenuPersistence();
         KitchenTaskPersistence kitchenTaskPersistence = new KitchenTaskPersistence();
@@ -44,7 +49,7 @@ public class CatERing {
         menuMgr.addEventReceiver(menuPersistence);
         kitchenTaskMgr.addEventReceiver(kitchenTaskPersistence);
         StaffMemberEventNotifier.registerReceiver(new StaffMemberPersistence());
-        // HolidayLeaveEventNotifier.registerReceiver(new HolidayLeavePersistence());
+        HolidayLeaveEventNotifier.registerReceiver(new HolidayLeavePersistence());
     }
 
     public static void main(String[] args) {
@@ -105,6 +110,14 @@ public class CatERing {
 
     public void setEventManager(EventManager eventMgr) {
         this.eventMgr = eventMgr;
+    }
+
+    public HolidayLeaveManager getHolidayLeaveManager() {
+        return holidayLeaveMgr;
+    }
+
+    public void setHolidayLeaveManager(HolidayLeaveManager holidayLeaveMgr) {
+        this.holidayLeaveMgr = holidayLeaveMgr;
     }
 
     public void setKitchenTaskManager(KitchenTaskManager kitchenTaskMgr) {
