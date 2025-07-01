@@ -37,6 +37,7 @@ public class StaffMemberManager {
 
         StaffMember newStaff = new StaffMember(email, name, surname, dateOfBirth, address, phone, wage, employmentType);
 
+        StaffMemberDAO.save(newStaff);
         StaffMemberEventNotifier.notifyCreated(newStaff);
 
         return newStaff;
@@ -62,6 +63,7 @@ public class StaffMemberManager {
 
         boolean added = staffMember.addRole(role, jobs);
         if (added) {
+            StaffMemberDAO.update(staffMember);
             StaffMemberEventNotifier.notifyUpdated(staffMember);
         }
         return added;
@@ -72,6 +74,7 @@ public class StaffMemberManager {
 
         boolean removed = staffMember.removeRole(role);
         if (removed) {
+            StaffMemberDAO.update(staffMember);
             StaffMemberEventNotifier.notifyUpdated(staffMember);
         }
         return removed;
@@ -82,6 +85,7 @@ public class StaffMemberManager {
 
         boolean removed = staffMember.removeJobs(role, jobs);
         if (removed) {
+            StaffMemberDAO.update(staffMember);
             StaffMemberEventNotifier.notifyUpdated(staffMember);
         }
         return removed;
@@ -97,7 +101,7 @@ public class StaffMemberManager {
 
         staffMember.changeEmploymentType(employmentType);
 
-        // Notify listeners about update
+        StaffMemberDAO.update(staffMember);
         StaffMemberEventNotifier.notifyUpdated(staffMember);
     }
 }
