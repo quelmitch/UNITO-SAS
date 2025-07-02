@@ -2,7 +2,6 @@ package catering.persistence;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.*;
 import java.util.logging.Level;
@@ -23,8 +22,7 @@ public class PersistenceManager {
     private static int lastId;
 
     // Make constructor private to prevent instantiation
-    private PersistenceManager() {
-    }
+    private PersistenceManager() {}
 
     // Ensure the database file exists
     private static void ensureDbExists() {
@@ -34,7 +32,7 @@ public class PersistenceManager {
                 // Create the parent directory if it doesn't exist
                 dbFile.getParentFile().mkdirs();
 
-                try (Connection conn = DriverManager.getConnection(URL)) {
+                try (Connection ignored = DriverManager.getConnection(URL)) {
                     // Connection is automatically closed by try-with-resources
                 }
 
@@ -48,27 +46,21 @@ public class PersistenceManager {
         }
     }
 
-    public static boolean initializeDatabase() {
-        return initializeDatabase(SCRIPT_PATH);
-    }
-
     /**
      * Initializes the database using an SQL script file
-     * 
+     *
      * @param scriptFilePath path to the SQL script file
-     * @return true if initialization was successful, false otherwise
      */
-
-    public static boolean initializeDatabase(String scriptFilePath) {
+    public static void initializeDatabase(String scriptFilePath) {
         File scriptFile = new File(scriptFilePath);
         if (!scriptFile.exists()) {
             LOGGER.severe("SQL script file not found: " + scriptFile.getAbsolutePath());
-            return false;
+            return;
         }
 
         try {
             // Read the SQL file content
-            String sqlScript = new String(Files.readAllBytes(scriptFile.toPath()), StandardCharsets.UTF_8);
+            String sqlScript = Files.readString(scriptFile.toPath());
 
             // Split the script into individual statements using semicolon as delimiter
             String[] statements = sqlScript.split(";");
@@ -85,14 +77,11 @@ public class PersistenceManager {
                 }
 
                 LOGGER.info("Database initialized successfully from " + scriptFilePath);
-                return true;
             }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error reading SQL file: " + scriptFilePath, e);
-            return false;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error executing SQL from file: " + scriptFilePath, e);
-            return false;
         }
     }
 

@@ -4,7 +4,6 @@ import catering.businesslogic.event.service.Service;
 import catering.businesslogic.event.service.ServiceDAO;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
 import catering.util.DateUtils;
 import catering.util.LogManager;
 
@@ -75,12 +74,9 @@ public class EventDAO {
         List<Event> events = new ArrayList<>();
         String query = "SELECT * FROM Events ORDER BY date_start DESC";
 
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                Event e = fromResultSet(rs);
-                events.add(e);
-            }
+        PersistenceManager.executeQuery(query, rs -> {
+            Event e = fromResultSet(rs);
+            events.add(e);
         });
 
         // Load services for each event using ServiceDAO
@@ -111,12 +107,7 @@ public class EventDAO {
     private static Event loadEventByQuery(String query, Object param) {
         final Event[] eventHolder = new Event[1];
 
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                eventHolder[0] = fromResultSet(rs);
-            }
-        }, param);
+        PersistenceManager.executeQuery(query, rs -> eventHolder[0] = fromResultSet(rs), param);
 
         Event event = eventHolder[0];
 

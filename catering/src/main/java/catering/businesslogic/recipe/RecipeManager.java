@@ -5,6 +5,6 @@ import java.util.ArrayList;
 public class RecipeManager {
 
     public ArrayList<Recipe> getRecipeBook() {
-        return Recipe.getAllRecipes();
+        return RecipeDAO.loadAllRecipes();
     }
 }

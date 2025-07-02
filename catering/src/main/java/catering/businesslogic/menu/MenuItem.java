@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import catering.businesslogic.recipe.Recipe;
+import catering.businesslogic.recipe.RecipeDAO;
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
+import lombok.Data;
 
+@Data
 public class MenuItem {
 
     public static void create(int menuid, int sectionid, ArrayList<MenuItem> items) {
@@ -49,19 +51,16 @@ public class MenuItem {
 
         String query = "SELECT * FROM MenuItems WHERE menu_id = ? AND section_id = ? ORDER BY position";
 
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                MenuItem mi = new MenuItem();
-                mi.id = rs.getInt("id");
-                mi.description = rs.getString("description");
-                result.add(mi);
-                recids.add(rs.getInt("recipe_id"));
-            }
+        PersistenceManager.executeQuery(query, rs -> {
+            MenuItem mi = new MenuItem();
+            mi.id = rs.getInt("id");
+            mi.description = rs.getString("description");
+            result.add(mi);
+            recids.add(rs.getInt("recipe_id"));
         }, menu_id, sec_id);
 
         for (int i = 0; i < result.size(); i++) {
-            result.get(i).recipe = Recipe.loadRecipe(recids.get(i));
+            result.get(i).recipe = RecipeDAO.loadRecipeById(recids.get(i));
         }
 
         return result;
@@ -102,26 +101,6 @@ public class MenuItem {
 
     private MenuItem() {
         this(null, null);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Recipe getRecipe() {
-        return recipe;
-    }
-
-    public void setRecipe(Recipe itemRecipe) {
-        this.recipe = itemRecipe;
     }
 
     public MenuItem deepCopy() {

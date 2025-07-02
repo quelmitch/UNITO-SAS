@@ -13,7 +13,6 @@ import catering.businesslogic.staffmember.StaffMember;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
 import lombok.Data;
 
 @Data
@@ -27,11 +26,11 @@ public class Menu {
     public static final String FEATURE_NEEDS_KITCHEN = "needsKitchen";
 
     public static final String[] DEFAULT_FEATURES = {
-            FEATURE_NEEDS_COOK,
-            FEATURE_FINGER_FOOD,
-            FEATURE_BUFFET,
-            FEATURE_WARM_DISHES,
-            FEATURE_NEEDS_KITCHEN
+        FEATURE_NEEDS_COOK,
+        FEATURE_FINGER_FOOD,
+        FEATURE_BUFFET,
+        FEATURE_WARM_DISHES,
+        FEATURE_NEEDS_KITCHEN
     };
 
     public static void create(Menu m) {
@@ -79,28 +78,25 @@ public class Menu {
 
         Menu m = new Menu();
 
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
+        PersistenceManager.executeQuery(query, rs -> {
 
-                m.id = id;
-                m.title = rs.getString("title");
-                m.published = rs.getBoolean("published");
-                m.owner = StaffMemberDAO.loadById(rs.getInt("owner_id"));
+            m.id = id;
+            m.title = rs.getString("title");
+            m.published = rs.getBoolean("published");
+            m.owner = StaffMemberDAO.loadById(rs.getInt("owner_id"));
 
-                // Load sections
-                m.sections = Section.loadSections(id);
+            // Load sections
+            m.sections = Section.loadSections(id);
 
-                // Load free items
-                m.freeItems = MenuItem.loadMenuItems(id, 0);
+            // Load free items
+            m.freeItems = MenuItem.loadMenuItems(id, 0);
 
-                // Load features
-                loadFeaturesFromDB(m);
+            // Load features
+            loadFeaturesFromDB(m);
 
-                // Check if menu is in use
-                checkIfMenuIsInUse(m);
+            // Check if menu is in use
+            checkIfMenuIsInUse(m);
 
-            }
         }, id);
 
         return m;
@@ -153,7 +149,7 @@ public class Menu {
             }
 
             @Override
-            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+            public void handleGeneratedIds(ResultSet rs, int count) {
                 // No generated IDs to handle
             }
         });
@@ -172,7 +168,7 @@ public class Menu {
             }
 
             @Override
-            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+            public void handleGeneratedIds(ResultSet rs, int count) {
                 // No generated IDs to handle
             }
         });
@@ -193,7 +189,7 @@ public class Menu {
             }
 
             @Override
-            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+            public void handleGeneratedIds(ResultSet rs, int count) {
                 // No generated IDs to handle
             }
         });
@@ -204,22 +200,12 @@ public class Menu {
      */
     private static void loadFeaturesFromDB(Menu m) {
         String query = "SELECT * FROM MenuFeatures WHERE menu_id = ?";
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                m.features.put(rs.getString("name"), rs.getBoolean("value"));
-            }
-        }, m.id);
+        PersistenceManager.executeQuery(query, rs -> m.features.put(rs.getString("name"), rs.getBoolean("value")), m.id);
     }
 
     private static void checkIfMenuIsInUse(Menu m) {
         String query = "SELECT * FROM Services WHERE approved_menu_id = ?";
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                m.inUse = true;
-            }
-        }, m.id);
+        PersistenceManager.executeQuery(query, rs -> m.inUse = true, m.id);
     }
 
     private int id;
@@ -244,9 +230,9 @@ public class Menu {
         this.owner = owner;
         this.published = false;
         this.inUse = false;
-        this.features = new HashMap<String, Boolean>();
-        this.sections = new ArrayList<Section>();
-        this.freeItems = new ArrayList<MenuItem>();
+        this.features = new HashMap<>();
+        this.sections = new ArrayList<>();
+        this.freeItems = new ArrayList<>();
 
         for (String feature : menuFeatures) {
             this.features.put(feature, false);
@@ -392,8 +378,7 @@ public class Menu {
     }
 
     public ArrayList<MenuItem> getItems() {
-        ArrayList<MenuItem> allItems = new ArrayList<>();
-        allItems.addAll(this.freeItems);
+        ArrayList<MenuItem> allItems = new ArrayList<>(this.freeItems);
 
         for (Section section : this.sections) {
             allItems.addAll(section.getItems());
@@ -511,8 +496,7 @@ public class Menu {
         copy.published = this.published;
         copy.inUse = this.inUse;
 
-        for (Map.Entry<String, Boolean> entry : this.features.entrySet())
-            copy.features.put(entry.getKey(), entry.getValue());
+        copy.features.putAll(this.features);
 
         for (Section sec : this.sections)
             copy.sections.add(sec.deepCopy());
@@ -592,11 +576,8 @@ public class Menu {
         } else if (!freeItems.equals(other.freeItems))
             return false;
         if (sections == null) {
-            if (other.sections != null)
-                return false;
-        } else if (!sections.equals(other.sections))
-            return false;
-        return true;
+            return other.sections == null;
+        } else return sections.equals(other.sections);
     }
 
     @Override

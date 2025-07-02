@@ -39,11 +39,6 @@ public class Event {
         return chef != null ? chef.getId() : 0;
     }
 
-    public void setChefId(int chefId) {
-        // This should now be delegated to StaffMemberDAO from the outside
-        throw new UnsupportedOperationException("Use StaffMemberDAO externally to load and assign a StaffMember.");
-    }
-
 
     // BUSINESS LOGIC
     public void addService(Service service) {

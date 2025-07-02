@@ -87,8 +87,8 @@ public class SummarySheetTest {
             // Verify summary sheet was created properly
             assertNotNull(sheet, "Summary sheet should not be null");
             assertEquals(chef, sheet.getOwner(), "Sheet owner should be the chef who created it");
-            assertNotNull(sheet.getTaskList(), "Task list should not be null");
-            assertTrue(sheet.getTaskList().size() > 0, "Task list should contain tasks");
+            assertNotNull(sheet.getTasks(), "Task list should not be null");
+            assertFalse(sheet.getTasks().isEmpty(), "Task list should contain tasks");
 
             LOGGER.info("Created summary sheet: " + sheet.toString());
         } catch (UseCaseLogicException e) {
@@ -105,10 +105,10 @@ public class SummarySheetTest {
             // Create summary sheet
             SummarySheet sheet = app.getKitchenTaskManager().generateSummarySheet(testEvent, testService);
             assertNotNull(sheet, "Summary sheet should not be null");
-            assertTrue(sheet.getTaskList().size() > 0, "Task list should contain tasks");
+            assertFalse(sheet.getTasks().isEmpty(), "Task list should contain tasks");
 
             // Get the first task
-            KitchenTask taskToAssign = sheet.getTaskList().get(0);
+            KitchenTask taskToAssign = sheet.getTasks().get(0);
             assertNotNull(taskToAssign, "Task to assign should not be null");
 
             // Create a shift
@@ -142,30 +142,5 @@ public class SummarySheetTest {
         } catch (UseCaseLogicException e) {
             fail("Exception should not be thrown: " + e.getMessage());
         }
-    }
-
-    void createStaffMemberProfile() {
-        // Autenticazione come organizzatore o proprietario
-        // Creare un nuovo profilo inserendo i dati nel costruttore
-        //// Inserire controlli per assunzione permanente (necessita di proprietario)
-    }
-
-    void editStaffMemberProfile() {
-        // Autenticazione come organizzatore o proprietario
-        // Modificare un profilo esistente utilizzando i setter
-        //// Inserire controlli per assunzione permanente (necessita di proprietario)
-    }
-
-
-    void deleteStaffMemberProfile() {
-        // Autenticazione come organizzatore o proprietario
-        // Eliminazione di un profilo esistente
-    }
-
-    void manageHolidayLeave() {
-        // Autenticazione come organizzatore o proprietario
-        // Selezionare un profilo
-        // Ottenere lista di richieste di ferie per quel membro del personale
-        // Accettare / Rifiutare
     }
 }

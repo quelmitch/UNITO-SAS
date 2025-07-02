@@ -18,73 +18,33 @@ import java.util.logging.Logger;
 public class ShiftManager {
     private final static Logger LOGGER = LogManager.getLogger(ShiftManager.class);
 
-    /**
-     * Constructor initializes by loading all shifts
-     */
     public ShiftManager() {
-        Shift.loadAllShifts();
+        ShiftDAO.loadAll();
     }
 
-    /**
-     * Gets all shifts in the system
-     * 
-     * @return List of all shifts
-     */
-    public ArrayList<Shift> getShiftTable() {
-        return Shift.getShiftTable();
+    public List<Shift> getShiftTable() {
+        return ShiftDAO.loadAll();
     }
 
-    /**
-     * Checks if a user is available for a shift
-     * 
-     * @param u The user to check
-     * @param s The shift to check
-     * @return true if the user is available (not booked) for the shift
-     */
     public boolean isAvailable(StaffMember u, Shift s) {
         return s.isBooked(u);
     }
 
-    /**
-     * Creates a new shift with the specified parameters
-     * 
-     * @param date      The date of the shift
-     * @param startTime The start time
-     * @param endTime   The end time
-     * @return The newly created shift
-     */
     public Shift createShift(Date date, Time startTime, Time endTime, String workPlace, boolean isKitchen) {
         LOGGER.info("Creating new shift on " + date + " at " + workPlace);
-        return Shift.createShift(date, startTime, endTime);
+        return ShiftDAO.create(date, startTime, endTime);
     }
 
-    /**
-     * Loads a shift by its ID
-     * 
-     * @param id The ID of the shift to load
-     * @return The loaded shift or null if not found
-     */
     public Shift loadShiftById(int id) {
         LOGGER.info("Loading shift with ID: " + id);
-        return Shift.loadItemById(id);
+        return ShiftDAO.loadById(id);
     }
 
-    /**
-     * Updates an existing shift
-     * 
-     * @param shift The shift to update with new values
-     */
     public void updateShift(Shift shift) {
         LOGGER.info("Updating shift with ID: " + shift.getId());
-        shift.updateShift();
+        ShiftDAO.update(shift);
     }
 
-    /**
-     * Books a user for a shift
-     * 
-     * @param shift The shift to book
-     * @param staffMember  The user to book for the shift
-     */
     public void bookStaffMemberForShift(Shift shift, StaffMember staffMember) {
         if (isAvailable(staffMember, shift)) {
             LOGGER.info("Booking user " + staffMember.getEmail() + " for shift ID: " + shift.getId());
@@ -94,34 +54,15 @@ public class ShiftManager {
         }
     }
 
-    /**
-     * Removes a user's booking from a shift
-     * 
-     * @param shift The shift to remove the booking from
-     * @param staffMember  The user to remove from the shift
-     * @return The removed user or null if not booked
-     */
     public StaffMember removeStaffMemberFromShift(Shift shift, StaffMember staffMember) {
         LOGGER.info("Removing user " + staffMember.getEmail() + " from shift ID: " + shift.getId());
-        return shift.removeBookedStaffMember(staffMember);
+        return ShiftDAO.removeBooking(shift, staffMember);
     }
 
-    /**
-     * Gets all users booked for a shift
-     * 
-     * @param shift The shift to check
-     * @return Map of user IDs to StaffMember objects
-     */
     public Map<Integer, StaffMember> getBookedStaffMembers(Shift shift) {
         return shift.getBookedStaffMembers();
     }
 
-    /**
-     * Gets shifts for a specific date
-     * 
-     * @param date The date to filter shifts for
-     * @return List of shifts on the specified date
-     */
     public List<Shift> getShiftsForDate(Date date) {
         List<Shift> dateShifts = new ArrayList<>();
         for (Shift shift : getShiftTable()) {

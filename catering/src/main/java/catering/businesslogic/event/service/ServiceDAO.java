@@ -86,7 +86,8 @@ public class ServiceDAO {
         }
     }
 
-    // Internal method to generalize loading logic
+
+    // HELPERS
     private static Service loadServiceByQuery(String query, Object param) {
         final Service[] holder = new Service[1];
 

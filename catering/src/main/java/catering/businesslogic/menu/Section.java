@@ -8,8 +8,9 @@ import java.util.List;
 
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
+import lombok.Data;
 
+@Data
 public class Section {
 
     public static void create(int menuid, Section sec, int posInMenu) {
@@ -17,7 +18,7 @@ public class Section {
         PersistenceManager.executeUpdate(secInsert, menuid, sec.name, posInMenu);
         sec.id = PersistenceManager.getLastId();
 
-        if (sec.sectionItems.size() > 0) {
+        if (!sec.sectionItems.isEmpty()) {
             MenuItem.create(menuid, sec.id, sec.sectionItems);
         }
     }
@@ -40,7 +41,7 @@ public class Section {
         });
 
         for (Section s : sections) {
-            if (s.sectionItems.size() > 0) {
+            if (!s.sectionItems.isEmpty()) {
                 MenuItem.create(menuid, s.id, s.sectionItems);
             }
         }
@@ -50,13 +51,10 @@ public class Section {
         ArrayList<Section> result = new ArrayList<>();
         String query = "SELECT * FROM MenuSections WHERE menu_id = ? ORDER BY position";
 
-        PersistenceManager.executeQuery(query, new ResultHandler() {
-            @Override
-            public void handle(ResultSet rs) throws SQLException {
-                Section s = new Section(rs.getString("name"));
-                s.id = rs.getInt("id");
-                result.add(s);
-            }
+        PersistenceManager.executeQuery(query, rs -> {
+            Section s = new Section(rs.getString("name"));
+            s.id = rs.getInt("id");
+            result.add(s);
         }, menu_id);
 
         for (Section s : result) {
@@ -91,7 +89,7 @@ public class Section {
             }
 
             @Override
-            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+            public void handleGeneratedIds(ResultSet rs, int count) {
                 // no generated ids to handle
             }
         });
@@ -120,8 +118,7 @@ public class Section {
 
     public void updateItems(ArrayList<MenuItem> newItems) {
         ArrayList<MenuItem> updatedList = new ArrayList<>();
-        for (int i = 0; i < newItems.size(); i++) {
-            MenuItem mi = newItems.get(i);
+        for (MenuItem mi : newItems) {
             MenuItem prev = this.findItemById(mi.getId());
             if (prev == null) {
                 updatedList.add(mi);
@@ -137,10 +134,6 @@ public class Section {
 
     public int getItemPosition(MenuItem mi) {
         return this.sectionItems.indexOf(mi);
-    }
-
-    public int getId() {
-        return id;
     }
 
     @Override
@@ -168,14 +161,6 @@ public class Section {
         }
 
         return sb.toString();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public ArrayList<MenuItem> getItems() {

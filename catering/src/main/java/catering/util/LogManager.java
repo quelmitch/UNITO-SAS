@@ -34,11 +34,10 @@ public class LogManager {
         rootLogger.setLevel(Level.INFO);
     }
 
-    public static synchronized LogManager getInstance() {
+    public static synchronized void getInstance() {
         if (instance == null) {
             instance = new LogManager();
         }
-        return instance;
     }
 
     public static Logger getLogger(Class<?> clazz) {

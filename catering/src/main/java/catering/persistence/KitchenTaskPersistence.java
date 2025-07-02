@@ -1,45 +1,42 @@
 package catering.persistence;
 
-import catering.businesslogic.kitchen.Assignment;
-import catering.businesslogic.kitchen.KitchenTaskEventReceiver;
-import catering.businesslogic.kitchen.SummarySheet;
-import catering.businesslogic.kitchen.KitchenTask;
+import catering.businesslogic.kitchen.*;
 
 public class KitchenTaskPersistence implements KitchenTaskEventReceiver {
 
     @Override
     public void updateSheetGenerated(SummarySheet summarySheet) {
-        SummarySheet.saveNewSumSheet(summarySheet);
+        SummarySheetDAO.save(summarySheet);
     }
 
     @Override
     public void updateTaskAdded(SummarySheet currentSumSheet, KitchenTask added) {
-        KitchenTask.saveNewTask(currentSumSheet.getId(), added, currentSumSheet.getTaskPosition(added));
+        KitchenTaskDAO.saveNewTask(currentSumSheet.getId(), added, currentSumSheet.getTaskPosition(added));
     }
 
     @Override
     public void updateTaskListSorted(SummarySheet currentSumSheet) {
-        SummarySheet.updateTaskList(currentSumSheet);
+        SummarySheetDAO.updateTaskPositions(currentSumSheet);
     }
 
     @Override
     public void updateAssignmentAdded(SummarySheet currentSumSheet, Assignment a) {
-        Assignment.saveNewAssignment(currentSumSheet.getId(), a);
+        AssignmentDAO.save(currentSumSheet.getId(), a);
     }
 
     @Override
     public void updateAssignmentChanged(Assignment a) {
-        Assignment.updateAssignment(a);
+        AssignmentDAO.update(a);
     }
 
     @Override
     public void updateAssignmentDeleted(Assignment ass) {
-        Assignment.deleteAssignment(ass);
+        AssignmentDAO.delete(ass);
     }
 
     @Override
     public void updateTaskChanged(KitchenTask task) {
-        KitchenTask.updateTaskChanged(task);
+        KitchenTaskDAO.update(task);
     }
 
 }

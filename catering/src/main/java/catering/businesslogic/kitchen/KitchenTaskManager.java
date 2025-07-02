@@ -1,6 +1,7 @@
 package catering.businesslogic.kitchen;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import catering.businesslogic.CatERing;
 import catering.exceptions.SummarySheetException;
@@ -13,7 +14,7 @@ import catering.businesslogic.staffmember.StaffMember;
 public class KitchenTaskManager {
 
     private SummarySheet currentSumSheet;
-    private ArrayList<KitchenTaskEventReceiver> eventReceivers;
+    private final ArrayList<KitchenTaskEventReceiver> eventReceivers;
 
     public KitchenTaskManager() {
         eventReceivers = new ArrayList<>();
@@ -24,7 +25,6 @@ public class KitchenTaskManager {
     }
 
     public SummarySheet generateSummarySheet(Event event, Service service) throws UseCaseLogicException {
-
         StaffMember staffMember = CatERing.getInstance().getStaffMemberManager().getCurrentStaffMember();
 
         if (!staffMember.hasRole(StaffMember.Role.CHEF))
@@ -47,14 +47,17 @@ public class KitchenTaskManager {
 
         SummarySheet newSummarySheet = new SummarySheet(service, staffMember);
 
+        // Persist the new summary sheet
+        SummarySheetDAO.save(newSummarySheet);
+
         this.setCurrentSumSheet(newSummarySheet);
         this.notifySheetGenerated(newSummarySheet);
 
         return newSummarySheet;
     }
 
-    public ArrayList<SummarySheet> loadAllSumSheets() {
-        return SummarySheet.loadAllSumSheets();
+    public List<SummarySheet> loadAllSumSheets() {
+        return SummarySheetDAO.loadAll();
     }
 
     public SummarySheet openSumSheet(SummarySheet ss) throws UseCaseLogicException, SummarySheetException {
@@ -79,11 +82,14 @@ public class KitchenTaskManager {
             throw new IllegalArgumentException();
         this.currentSumSheet.moveTask(t, pos);
 
+        // Persist new ordering
+        SummarySheetDAO.updateTaskPositions(currentSumSheet);
+
         this.notifyTaskListSorted();
     }
 
     public void addTaskInformation(KitchenTask task, int quantity, int portions, long minutes)
-            throws SummarySheetException, UseCaseLogicException {
+        throws SummarySheetException, UseCaseLogicException {
         if (currentSumSheet == null)
             throw new UseCaseLogicException();
         if (currentSumSheet.getTaskPosition(task) < 0)
@@ -111,20 +117,21 @@ public class KitchenTaskManager {
         if (cook != null && !CatERing.getInstance().getShiftManager().isAvailable(cook, s)) {
             throw new UseCaseLogicException("Cook " + cook.getEmail() + " is not available for the selected shift.");
         }
-        Assignment a = currentSumSheet.addAssignment(t, s, cook);
-        this.notifyAssignmentAdded(a);
+        Assignment assignment = currentSumSheet.addAssignment(t, s, cook);
 
-        return a;
+        // Persist assignment
+        AssignmentDAO.save(currentSumSheet.getId(), assignment);
+
+        this.notifyAssignmentAdded(assignment);
+        return assignment;
     }
 
     public void modifyAssignment(Assignment ass) throws UseCaseLogicException, SummarySheetException {
-        Shift shift = ass.getShift();
-        modifyAssignment(ass, shift, null);
+        modifyAssignment(ass, ass.getShift(), null);
     }
 
     public void modifyAssignment(Assignment ass, StaffMember cook) throws UseCaseLogicException, SummarySheetException {
-        Shift shift = ass.getShift();
-        modifyAssignment(ass, shift, cook);
+        modifyAssignment(ass, ass.getShift(), cook);
     }
 
     public void modifyAssignment(Assignment ass, Shift shift) throws UseCaseLogicException, SummarySheetException {
@@ -132,36 +139,41 @@ public class KitchenTaskManager {
     }
 
     public void modifyAssignment(Assignment ass, Shift shift, StaffMember cook)
-            throws UseCaseLogicException, SummarySheetException {
-        Assignment a;
-
+        throws UseCaseLogicException, SummarySheetException {
         if (currentSumSheet == null)
             throw new UseCaseLogicException();
-        if (cook == null || CatERing.getInstance().getShiftManager().isAvailable(cook, shift))
-            a = currentSumSheet.modifyAssignment(ass, shift, cook);
-        else
+
+        if (cook != null && !CatERing.getInstance().getShiftManager().isAvailable(cook, shift))
             throw new UseCaseLogicException();
 
-        notifyAssignmentChanged(a);
+        Assignment updated = currentSumSheet.modifyAssignment(ass, shift, cook);
+
+        // Persist change
+        AssignmentDAO.update(updated);
+
+        notifyAssignmentChanged(updated);
     }
 
-    /**
-     * Gets the current summary sheet
-     *
-     * @return The current summary sheet
-     */
     public SummarySheet getCurrentSummarySheet() {
         return currentSumSheet;
     }
 
     public void setTaskReady(KitchenTask t) throws UseCaseLogicException {
         KitchenTask task = currentSumSheet.setTaskReady(t);
+
+        // Persist task ready status if needed
+        KitchenTaskDAO.update(task);
+
         notifyTaskChanged(task);
     }
 
     public void deleteAssignment(Assignment a) throws UseCaseLogicException {
-        Assignment ass = currentSumSheet.deleteAssignment(a);
-        notifyAssignmentDeleted(ass);
+        Assignment deleted = currentSumSheet.deleteAssignment(a);
+
+        // Remove from DB
+        AssignmentDAO.delete(deleted);
+
+        notifyAssignmentDeleted(deleted);
     }
 
     private void setCurrentSumSheet(SummarySheet summarySheet) {
@@ -186,11 +198,6 @@ public class KitchenTaskManager {
         }
     }
 
-    /**
-     * Notifies all event receivers about a new assignment
-     * 
-     * @param assignment The assignment that was added
-     */
     private void notifyAssignmentAdded(Assignment assignment) {
         for (KitchenTaskEventReceiver er : eventReceivers) {
             er.updateAssignmentAdded(currentSumSheet, assignment);
@@ -214,5 +221,4 @@ public class KitchenTaskManager {
             er.updateSheetGenerated(summarySheet);
         }
     }
-
 }

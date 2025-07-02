@@ -1,10 +1,8 @@
 package catering.businesslogic.staffmember;
 
-import catering.businesslogic.staffmember.StaffMember;
 import catering.businesslogic.staffmember.StaffMember.EmploymentType;
 import catering.businesslogic.staffmember.StaffMember.Role;
 import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
 import catering.util.DateUtils;
 
 import java.sql.ResultSet;
@@ -97,7 +95,8 @@ public class StaffMemberDAO {
         return false;
     }
 
-    // ----- Helper Methods -----
+
+    // HELPERS
 
     private static void mapStaffMember(ResultSet rs, StaffMember staff) throws SQLException {
         staff.setId(rs.getInt("id"));
