@@ -1,9 +1,9 @@
 package catering.persistence;
 
-import catering.businesslogic.menu.Menu;
-import catering.businesslogic.menu.MenuEventReceiver;
-import catering.businesslogic.menu.MenuItem;
-import catering.businesslogic.menu.Section;
+import catering.domains.menu.Menu;
+import catering.domains.menu.MenuEventReceiver;
+import catering.domains.menu.MenuItem;
+import catering.domains.menu.Section;
 
 public class MenuPersistence implements MenuEventReceiver {
 

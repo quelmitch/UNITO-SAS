@@ -73,7 +73,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>catering.businesslogic.CatERing</mainClass>
+                    <mainClass>catering.app.CatERing</mainClass>
                 </configuration>
             </plugin>
         </plugins>
