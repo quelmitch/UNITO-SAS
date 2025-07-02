@@ -1,5 +1,6 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.infrastructure;
 
+import catering.businesslogic.kitchen.domain.Assignment;
 import catering.businesslogic.shift.ShiftDAO;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.BatchUpdateHandler;

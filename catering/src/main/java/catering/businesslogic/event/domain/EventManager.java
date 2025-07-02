@@ -1,8 +1,9 @@
-package catering.businesslogic.event.mainevent;
+package catering.businesslogic.event.domain;
 
+import catering.businesslogic.event.infrastructure.EventDAO;
+import catering.businesslogic.event.infrastructure.EventPublisher;
 import catering.exceptions.UseCaseLogicException;
-import catering.businesslogic.event.service.Service;
-import catering.businesslogic.event.service.ServiceDAO;
+import catering.businesslogic.event.infrastructure.ServiceDAO;
 import catering.businesslogic.menu.Menu;
 import catering.businesslogic.staffmember.StaffMember;
 import catering.util.LogManager;
@@ -20,22 +21,8 @@ public class EventManager {
 
     private final Logger LOGGER = LogManager.getLogger(EventManager.class);
 
-    private EventEventNotifier eventEventNotifier; // notification manager
-
     private Event selectedEvent;
     private Service currentService;
-
-    public EventManager() {
-        this.eventEventNotifier = new EventEventNotifier();
-    }
-
-    public void addEventReceiver(EventEventReceiver receiver) {
-        eventEventNotifier.addEventReceiver(receiver);
-    }
-
-    public void removeEventReceiver(EventEventReceiver receiver) {
-        eventEventNotifier.removeEventReceiver(receiver);
-    }
 
     public ArrayList<Event> getEvents() {
         return new ArrayList<>(EventDAO.loadAll());
@@ -60,7 +47,7 @@ public class EventManager {
             this.selectedEvent = event;
             this.currentService = null;
 
-            eventEventNotifier.notifyEventCreated(event);
+            EventPublisher.notifyEventCreated(event);
 
             return event;
         } catch (Exception e) {
@@ -88,7 +75,7 @@ public class EventManager {
             selectedEvent.addService(service);
             this.currentService = service;
 
-            eventEventNotifier.notifyServiceCreated(selectedEvent, service);
+            EventPublisher.notifyServiceCreated(selectedEvent, service);
 
             return service;
         } catch (Exception e) {
@@ -104,7 +91,7 @@ public class EventManager {
             event.setDateStart(dateStart);
             EventDAO.update(event);
 
-            eventEventNotifier.notifyEventModified(event);
+            EventPublisher.notifyEventModified(event);
 
             if (selectedEvent != null && selectedEvent.getId() == eventId) {
                 this.selectedEvent = event;
@@ -134,7 +121,7 @@ public class EventManager {
                 currentService = service;
             }
 
-            eventEventNotifier.notifyServiceModified(service);
+            EventPublisher.notifyServiceModified(service);
         }
 
         return service;
@@ -153,7 +140,7 @@ public class EventManager {
                 currentService = null;
             }
 
-            eventEventNotifier.notifyServiceDeleted(service);
+            EventPublisher.notifyServiceDeleted(service);
         }
 
         return success;
@@ -170,7 +157,7 @@ public class EventManager {
                 currentService = null;
             }
 
-            eventEventNotifier.notifyEventDeleted(event);
+            EventPublisher.notifyEventDeleted(event);
         }
 
         return success;
@@ -187,7 +174,7 @@ public class EventManager {
         currentService.assignMenuToService(menu);
         ServiceDAO.update(currentService);
 
-        eventEventNotifier.notifyMenuAssigned(currentService, menu);
+        EventPublisher.notifyMenuAssigned(currentService, menu);
     }
 
     public boolean removeMenu() {
@@ -196,7 +183,7 @@ public class EventManager {
         currentService.removeMenu();
         ServiceDAO.update(currentService);
 
-        eventEventNotifier.notifyMenuRemoved(currentService);
+        EventPublisher.notifyMenuRemoved(currentService);
         return true;
     }
 }

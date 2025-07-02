@@ -1,5 +1,6 @@
-package catering.businesslogic.event.service;
+package catering.businesslogic.event.infrastructure;
 
+import catering.businesslogic.event.domain.Service;
 import catering.businesslogic.menu.Menu;
 import catering.persistence.PersistenceManager;
 
@@ -91,9 +92,9 @@ public class ServiceDAO {
     private static Service loadServiceByQuery(String query, Object param) {
         final Service[] holder = new Service[1];
 
-        PersistenceManager.executeQuery(query, rs -> {
-            holder[0] = mapResultSetToService(rs);
-        }, param);
+        PersistenceManager.executeQuery(query, rs ->
+            holder[0] = mapResultSetToService(rs), param
+        );
 
         return holder[0];
     }

@@ -1,4 +1,4 @@
-package catering.businesslogic.event.service;
+package catering.businesslogic.event.domain;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -22,8 +22,6 @@ public class Service {
     private int eventId;
     private Menu menu;
 
-    // CONSTRUCTORS
-
     public Service(String name) {
         this.name = name;
     }
@@ -37,9 +35,6 @@ public class Service {
         this.eventId = eventId;
     }
 
-
-    // CUSTOM GETTERS & SETTERS
-
     public int getMenuId() {
         return (menu != null) ? menu.getId() : 0;
     }
@@ -50,6 +45,7 @@ public class Service {
 
 
     // BUSINESS LOGIC
+
     public void assignMenuToService(Menu menu) {
         this.menu = menu;
     }

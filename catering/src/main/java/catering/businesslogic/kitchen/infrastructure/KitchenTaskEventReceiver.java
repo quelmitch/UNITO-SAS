@@ -1,4 +1,8 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.infrastructure;
+
+import catering.businesslogic.kitchen.domain.Assignment;
+import catering.businesslogic.kitchen.domain.KitchenTask;
+import catering.businesslogic.kitchen.domain.SummarySheet;
 
 public interface KitchenTaskEventReceiver {
 

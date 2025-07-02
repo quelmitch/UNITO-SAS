@@ -1,11 +1,12 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.domain;
 
-import catering.businesslogic.event.service.Service;
+import catering.businesslogic.event.domain.Service;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.staffmember.StaffMember;
 import catering.exceptions.SummarySheetException;
 import catering.exceptions.UseCaseLogicException;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * Domain model for a summary sheet in the kitchen process.
  */
 @Data
+@NoArgsConstructor
 public class SummarySheet {
     private int id;
     private Service service;
@@ -29,10 +31,6 @@ public class SummarySheet {
 
         service.getMenu().getKitchenProcesses()
             .forEach(process -> tasks.add(new KitchenTask(process, process.getName())));
-    }
-
-    protected SummarySheet() {
-        // For internal or DAO use
     }
 
     public KitchenTask addTask(KitchenTask task) {

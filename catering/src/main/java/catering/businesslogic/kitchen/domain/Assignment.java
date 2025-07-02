@@ -1,4 +1,4 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.domain;
 
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.staffmember.StaffMember;

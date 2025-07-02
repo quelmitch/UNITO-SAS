@@ -1,5 +1,6 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.infrastructure;
 
+import catering.businesslogic.kitchen.domain.KitchenTask;
 import catering.businesslogic.recipe.PreparationDAO;
 import catering.businesslogic.recipe.RecipeDAO;
 import catering.persistence.BatchUpdateHandler;

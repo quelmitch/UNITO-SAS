@@ -1,6 +1,7 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.infrastructure;
 
-import catering.businesslogic.event.service.ServiceDAO;
+import catering.businesslogic.event.infrastructure.ServiceDAO;
+import catering.businesslogic.kitchen.domain.SummarySheet;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;

@@ -1,6 +1,12 @@
 package catering.persistence;
 
-import catering.businesslogic.kitchen.*;
+import catering.businesslogic.kitchen.domain.Assignment;
+import catering.businesslogic.kitchen.domain.KitchenTask;
+import catering.businesslogic.kitchen.domain.SummarySheet;
+import catering.businesslogic.kitchen.infrastructure.AssignmentDAO;
+import catering.businesslogic.kitchen.infrastructure.KitchenTaskDAO;
+import catering.businesslogic.kitchen.infrastructure.KitchenTaskEventReceiver;
+import catering.businesslogic.kitchen.infrastructure.SummarySheetDAO;
 
 public class KitchenTaskPersistence implements KitchenTaskEventReceiver {
 

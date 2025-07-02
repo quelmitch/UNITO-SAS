@@ -1,4 +1,4 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.domain;
 
 import catering.businesslogic.recipe.KitchenProcess;
 import lombok.Data;

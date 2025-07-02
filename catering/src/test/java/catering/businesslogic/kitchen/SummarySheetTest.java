@@ -2,8 +2,11 @@ package catering.businesslogic.kitchen;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import catering.businesslogic.event.mainevent.EventDAO;
-import catering.businesslogic.event.service.ServiceDAO;
+import catering.businesslogic.event.infrastructure.EventDAO;
+import catering.businesslogic.event.infrastructure.ServiceDAO;
+import catering.businesslogic.kitchen.domain.Assignment;
+import catering.businesslogic.kitchen.domain.KitchenTask;
+import catering.businesslogic.kitchen.domain.SummarySheet;
 import catering.businesslogic.staffmember.StaffMember;
 import catering.businesslogic.staffmember.StaffMemberCreationTest;
 import catering.businesslogic.staffmember.StaffMemberDAO;
@@ -21,8 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import catering.businesslogic.CatERing;
 import catering.exceptions.UseCaseLogicException;
-import catering.businesslogic.event.mainevent.Event;
-import catering.businesslogic.event.service.Service;
+import catering.businesslogic.event.domain.Event;
+import catering.businesslogic.event.domain.Service;
 import catering.businesslogic.shift.Shift;
 import catering.persistence.PersistenceManager;
 import catering.util.LogManager;

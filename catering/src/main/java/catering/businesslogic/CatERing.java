@@ -1,10 +1,10 @@
 package catering.businesslogic;
 
-import catering.businesslogic.event.mainevent.EventManager;
+import catering.businesslogic.event.domain.EventManager;
 import catering.businesslogic.holidayleave.HolidayLeaveEventNotifier;
 import catering.businesslogic.holidayleave.HolidayLeaveManager;
 import catering.businesslogic.holidayleave.HolidayLeavePersistence;
-import catering.businesslogic.kitchen.KitchenTaskManager;
+import catering.businesslogic.kitchen.domain.KitchenTaskManager;
 import catering.businesslogic.menu.MenuManager;
 import catering.businesslogic.recipe.RecipeManager;
 import catering.businesslogic.shift.ShiftManager;

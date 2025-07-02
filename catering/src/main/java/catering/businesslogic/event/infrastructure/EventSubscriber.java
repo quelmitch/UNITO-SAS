@@ -1,9 +1,10 @@
-package catering.businesslogic.event.mainevent;
+package catering.businesslogic.event.infrastructure;
 
-import catering.businesslogic.event.service.Service;
+import catering.businesslogic.event.domain.Event;
+import catering.businesslogic.event.domain.Service;
 import catering.businesslogic.menu.Menu;
 
-public interface EventEventReceiver {
+public interface EventSubscriber {
 
     void updateEventCreated(Event event);
 

@@ -1,6 +1,5 @@
-package catering.businesslogic.event.mainevent;
+package catering.businesslogic.event.domain;
 
-import catering.businesslogic.event.service.Service;
 import catering.businesslogic.staffmember.StaffMember;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,20 +19,12 @@ public class Event {
     private StaffMember chef;
     private List<Service> services = new ArrayList<>();
 
-    // CONSTRUCTORS
-    public Event(String name) {
-        this.name = name;
-    }
-
     public Event(String name, Date dateStart, Date dateEnd, StaffMember chef) {
         this.name = name;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.chef = chef;
     }
-
-
-    // CUSTOM GETTERS & SETTERS
 
     public int getChefId() {
         return chef != null ? chef.getId() : 0;

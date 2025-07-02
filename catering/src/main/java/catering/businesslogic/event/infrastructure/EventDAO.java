@@ -1,7 +1,7 @@
-package catering.businesslogic.event.mainevent;
+package catering.businesslogic.event.infrastructure;
 
-import catering.businesslogic.event.service.Service;
-import catering.businesslogic.event.service.ServiceDAO;
+import catering.businesslogic.event.domain.Event;
+import catering.businesslogic.event.domain.Service;
 import catering.businesslogic.staffmember.StaffMemberDAO;
 import catering.persistence.PersistenceManager;
 import catering.util.DateUtils;
@@ -15,8 +15,6 @@ import java.util.logging.Logger;
 
 public class EventDAO {
     private final static Logger LOGGER = LogManager.getLogger(EventDAO.class);
-
-    // STATIC METHODS
 
     public static void save(Event event) {
         String query = "INSERT INTO Events (name, date_start, date_end, chef_id) VALUES (?, ?, ?, ?)";

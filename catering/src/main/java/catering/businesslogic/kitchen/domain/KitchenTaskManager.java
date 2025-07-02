@@ -1,13 +1,17 @@
-package catering.businesslogic.kitchen;
+package catering.businesslogic.kitchen.domain;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import catering.businesslogic.CatERing;
+import catering.businesslogic.kitchen.infrastructure.AssignmentDAO;
+import catering.businesslogic.kitchen.infrastructure.KitchenTaskDAO;
+import catering.businesslogic.kitchen.infrastructure.KitchenTaskEventReceiver;
+import catering.businesslogic.kitchen.infrastructure.SummarySheetDAO;
 import catering.exceptions.SummarySheetException;
 import catering.exceptions.UseCaseLogicException;
-import catering.businesslogic.event.mainevent.Event;
-import catering.businesslogic.event.service.Service;
+import catering.businesslogic.event.domain.Event;
+import catering.businesslogic.event.domain.Service;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.staffmember.StaffMember;
 
