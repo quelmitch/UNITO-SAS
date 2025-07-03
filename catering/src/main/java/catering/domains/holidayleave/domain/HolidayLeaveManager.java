@@ -2,10 +2,9 @@ package catering.domains.holidayleave.domain;
 
 import catering.app.CatERing;
 import catering.domains.holidayleave.infrastructure.HolidayLeaveDAO;
-import catering.domains.holidayleave.infrastructure.HolidayLeaveEventNotifier;
+import catering.domains.holidayleave.infrastructure.HolidayLeavePublisher;
 import catering.exceptions.UseCaseLogicException;
 import catering.domains.staffmember.domain.StaffMember;
-import catering.domains.staffmember.infrastructure.StaffMemberDAO;
 import catering.utils.DateUtils;
 import catering.utils.LogManager;
 import lombok.Data;
@@ -29,27 +28,11 @@ public class HolidayLeaveManager {
             DateUtils.safeValueOf(String.valueOf(endDate)),
             HolidayLeave.RequestStatus.IN_ATTESA
         );
-        HolidayLeaveEventNotifier.notifyHolidayLeaveCreated(leave);
+
+        HolidayLeaveDAO.save(leave);
+        HolidayLeavePublisher.notifyHolidayLeaveCreated(leave);
 
         return leave;
-    }
-
-    // Approve a holiday leave
-    public void approveLeave(HolidayLeave leave) throws UseCaseLogicException {
-        StaffMember currentStaffMember = CatERing.getInstance().getStaffMemberManager().getCurrentStaffMember();
-        CatERing.getInstance().getStaffMemberManager().isAdministrator(currentStaffMember);
-
-        leave.setStatus(HolidayLeave.RequestStatus.ACCETTATA);
-        HolidayLeaveEventNotifier.notifyHolidayLeaveUpdated(leave);
-    }
-
-    // Reject a holiday leave
-    public void rejectLeave(HolidayLeave leave) throws UseCaseLogicException {
-        StaffMember currentStaffMember = CatERing.getInstance().getStaffMemberManager().getCurrentStaffMember();
-        CatERing.getInstance().getStaffMemberManager().isAdministrator(currentStaffMember);
-
-        leave.setStatus(HolidayLeave.RequestStatus.RIFIUTATA);
-        HolidayLeaveEventNotifier.notifyHolidayLeaveUpdated(leave);
     }
 
     // Cancel a pending request by the same staff member
@@ -66,9 +49,29 @@ public class HolidayLeaveManager {
 
         boolean deleted = HolidayLeaveDAO.delete(leave);
         if (deleted) {
-            HolidayLeaveEventNotifier.notifyHolidayLeaveDeleted(leave);
+            HolidayLeavePublisher.notifyHolidayLeaveDeleted(leave);
         }
 
         return deleted;
+    }
+
+    // Approve a holiday leave
+    public void approveLeave(HolidayLeave leave) throws UseCaseLogicException {
+        changeHolidayLeaveStatus(leave, HolidayLeave.RequestStatus.ACCETTATA);
+    }
+
+    // Reject a holiday leave
+    public void rejectLeave(HolidayLeave leave) throws UseCaseLogicException {
+        changeHolidayLeaveStatus(leave, HolidayLeave.RequestStatus.RIFIUTATA);
+    }
+
+    private void changeHolidayLeaveStatus(HolidayLeave leave, HolidayLeave.RequestStatus status) throws UseCaseLogicException {
+        StaffMember currentStaffMember = CatERing.getInstance().getStaffMemberManager().getCurrentStaffMember();
+        CatERing.getInstance().getStaffMemberManager().isAdministrator(currentStaffMember);
+
+        leave.setStatus(status);
+
+        HolidayLeaveDAO.update(leave);
+        HolidayLeavePublisher.notifyHolidayLeaveUpdated(leave);
     }
 }

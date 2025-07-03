@@ -1,9 +1,7 @@
 package catering.app;
 
 import catering.domains.event.domain.EventManager;
-import catering.domains.holidayleave.infrastructure.HolidayLeaveEventNotifier;
 import catering.domains.holidayleave.domain.HolidayLeaveManager;
-import catering.domains.holidayleave.infrastructure.HolidayLeavePersistence;
 import catering.domains.kitchen.domain.KitchenTaskManager;
 import catering.domains.menu.MenuManager;
 import catering.domains.recipe.domain.RecipeManager;
@@ -57,7 +55,6 @@ public class CatERing {
         MenuPersistence menuPersistence = new MenuPersistence();
 
         menuManager.addEventReceiver(menuPersistence);
-        HolidayLeaveEventNotifier.registerReceiver(new HolidayLeavePersistence());
     }
 
     public static void main(String[] args) {
