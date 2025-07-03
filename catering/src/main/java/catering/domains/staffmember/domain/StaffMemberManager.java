@@ -50,6 +50,14 @@ public class StaffMemberManager {
         return deleted;
     }
 
+    public void changeWage(StaffMember staffMember, int wage) throws UseCaseLogicException {
+        isAdministrator(currentStaffMember);
+
+        staffMember.setWage(wage);
+
+        StaffMemberDAO.update(staffMember);
+        StaffMemberPublisher.notifyUpdated(staffMember);
+    }
 
     // ROLES
 

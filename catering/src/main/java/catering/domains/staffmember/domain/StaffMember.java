@@ -44,11 +44,6 @@ public class StaffMember {
     private EmploymentType employmentType;
     private final Map<Role, Set<String>> roles = new HashMap<>();
 
-    public StaffMember(String email) {
-        this.id = 0;
-        this.email = email;
-    }
-
     public StaffMember(String email, String name, String surname, Date dateOfBirth, String address,
                        String phone, int wage, EmploymentType employmentType) {
         this.email = email;
