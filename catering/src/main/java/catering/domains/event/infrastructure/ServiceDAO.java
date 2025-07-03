@@ -1,7 +1,8 @@
 package catering.domains.event.infrastructure;
 
 import catering.domains.event.domain.Service;
-import catering.domains.menu.Menu;
+import catering.domains.menu.domain.Menu;
+import catering.domains.menu.infrastructure.MenuDAO;
 import catering.persistence.PersistenceManager;
 
 import java.sql.*;
@@ -123,7 +124,7 @@ public class ServiceDAO {
         int menuId = rs.getInt("approved_menu_id");
         if (menuId > 0) {
             try {
-                s.setMenu(Menu.load(menuId));
+                s.setMenu(MenuDAO.load(menuId));
             } catch (Exception e) {
                 LOGGER.warning("Could not load menu ID " + menuId + " for service ID " + s.getId());
             }

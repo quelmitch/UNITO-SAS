@@ -3,6 +3,7 @@ package catering.domains.holidayleave.domain;
 import catering.app.CatERing;
 import catering.domains.holidayleave.infrastructure.HolidayLeaveDAO;
 import catering.domains.holidayleave.infrastructure.HolidayLeavePublisher;
+import catering.domains.staffmember.infrastructure.AuthorizationService;
 import catering.exceptions.UseCaseLogicException;
 import catering.domains.staffmember.domain.StaffMember;
 import catering.utils.DateUtils;
@@ -66,8 +67,7 @@ public class HolidayLeaveManager {
     }
 
     private void changeHolidayLeaveStatus(HolidayLeave leave, HolidayLeave.RequestStatus status) throws UseCaseLogicException {
-        StaffMember currentStaffMember = CatERing.getInstance().getStaffMemberManager().getCurrentStaffMember();
-        CatERing.getInstance().getStaffMemberManager().isAdministrator(currentStaffMember);
+        AuthorizationService.requireCurrentUserHasAnyRole(StaffMember.Role.ORGANIZZATORE, StaffMember.Role.PROPRIETARIO);
 
         leave.setStatus(status);
 

@@ -2,9 +2,10 @@ package catering.domains.event.domain;
 
 import catering.domains.event.infrastructure.EventDAO;
 import catering.domains.event.infrastructure.EventPublisher;
+import catering.domains.menu.infrastructure.MenuDAO;
 import catering.exceptions.UseCaseLogicException;
 import catering.domains.event.infrastructure.ServiceDAO;
-import catering.domains.menu.Menu;
+import catering.domains.menu.domain.Menu;
 import catering.domains.staffmember.domain.StaffMember;
 import catering.utils.LogManager;
 
@@ -119,7 +120,7 @@ public class EventManager {
 
             if (menuId > 0 && (service.getMenuId() == 0 || service.getMenuId() != menuId)) {
                 try {
-                    Menu menu = Menu.load(menuId);
+                    Menu menu = MenuDAO.load(menuId);
                     service.setMenu(menu);
                 } catch (Exception e) {
                     LOGGER.warning("Error loading menu ID " + menuId + ": " + e.getMessage());

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import catering.domains.staffmember.infrastructure.AuthorizationService;
 import catering.domains.staffmember.infrastructure.StaffMemberDAO;
 import catering.domains.staffmember.infrastructure.StaffMemberPublisher;
 import catering.exceptions.UseCaseLogicException;
@@ -20,12 +21,6 @@ public class StaffMemberManager {
         this.currentStaffMember = StaffMemberDAO.loadByEmail(email);
     }
 
-    public void isAdministrator(StaffMember staffMember) throws UseCaseLogicException {
-        if (!staffMember.hasRole(StaffMember.Role.ORGANIZZATORE) && !staffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
-            throw new UseCaseLogicException("User must be authorized");
-        }
-    }
-
 
     public StaffMember addNewStaffMember(
         String email, String name, String surname, Date dateOfBirth, String address,
@@ -33,9 +28,8 @@ public class StaffMemberManager {
     ) throws UseCaseLogicException {
         isAdministrator(currentStaffMember);
 
-        if (employmentType == StaffMember.EmploymentType.PERMANENTE &&
-            !currentStaffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
-            throw new UseCaseLogicException("Only owner can add permanent staff");
+        if (employmentType == StaffMember.EmploymentType.PERMANENTE) {
+            AuthorizationService.requireCurrentUserHasRole(StaffMember.Role.PROPRIETARIO);
         }
 
         StaffMember newStaff = new StaffMember(email, name, surname, dateOfBirth, address, phone, wage, employmentType);
@@ -103,14 +97,19 @@ public class StaffMemberManager {
     public void changeEmploymentType(StaffMember staffMember, StaffMember.EmploymentType employmentType) throws UseCaseLogicException {
         isAdministrator(currentStaffMember);
 
-        if (employmentType == StaffMember.EmploymentType.PERMANENTE &&
-            !currentStaffMember.hasRole(StaffMember.Role.PROPRIETARIO)) {
-            throw new UseCaseLogicException("Only owner can change to permanent");
+        if (employmentType == StaffMember.EmploymentType.PERMANENTE) {
+            AuthorizationService.requireCurrentUserHasRole(StaffMember.Role.PROPRIETARIO);
         }
 
         staffMember.changeEmploymentType(employmentType);
 
         StaffMemberDAO.update(staffMember);
         StaffMemberPublisher.notifyUpdated(staffMember);
+    }
+
+
+    // HELPERS
+    private void isAdministrator(StaffMember staffMember) throws UseCaseLogicException {
+        AuthorizationService.requireAnyRole(staffMember, StaffMember.Role.ORGANIZZATORE, StaffMember.Role.PROPRIETARIO);
     }
 }

@@ -45,8 +45,6 @@ public class Event {
     }
 
 
-    // UTILITY
-
     @Override
     public String toString() {
         return "Event [id=" + id + ", name=" + name + ", dateStart=" + dateStart +

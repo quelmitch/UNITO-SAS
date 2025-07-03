@@ -1,6 +1,10 @@
-package catering.domains.menu;
+package catering.domains.menu.infrastructure;
 
-public interface MenuEventReceiver {
+import catering.domains.menu.domain.MenuItem;
+import catering.domains.menu.domain.Section;
+import catering.domains.menu.domain.Menu;
+
+public interface MenuSubscriber {
 
     public void updateMenuCreated(Menu m);
 

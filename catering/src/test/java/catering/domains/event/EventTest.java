@@ -6,7 +6,7 @@ import catering.domains.event.domain.EventManager;
 import catering.domains.event.domain.Service;
 import catering.domains.event.infrastructure.EventDAO;
 import catering.domains.event.infrastructure.ServiceDAO;
-import catering.domains.menu.Menu;
+import catering.domains.menu.domain.Menu;
 import catering.domains.staffmember.domain.StaffMember;
 import catering.domains.staffmember.infrastructure.StaffMemberDAO;
 import catering.exceptions.UseCaseLogicException;

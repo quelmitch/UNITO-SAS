@@ -5,8 +5,8 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import catering.domains.menu.Menu;
-import catering.domains.menu.MenuItem;
+import catering.domains.menu.domain.Menu;
+import catering.domains.menu.domain.MenuItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

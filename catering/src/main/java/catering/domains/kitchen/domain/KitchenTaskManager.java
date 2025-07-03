@@ -4,6 +4,7 @@ import java.util.List;
 
 import catering.app.CatERing;
 import catering.domains.kitchen.infrastructure.*;
+import catering.domains.staffmember.infrastructure.AuthorizationService;
 import catering.exceptions.SummarySheetException;
 import catering.exceptions.UseCaseLogicException;
 import catering.domains.event.domain.Event;
@@ -22,8 +23,7 @@ public class KitchenTaskManager {
     public SummarySheet generateSummarySheet(Event event, Service service) throws UseCaseLogicException {
         StaffMember staffMember = CatERing.getInstance().getStaffMemberManager().getCurrentStaffMember();
 
-        if (!staffMember.hasRole(StaffMember.Role.CHEF))
-            throw new UseCaseLogicException("Staff Member is not a chef");
+        AuthorizationService.requireCurrentUserHasRole(StaffMember.Role.CHEF);
 
         if (event == null)
             throw new UseCaseLogicException("Event not specified");
@@ -55,8 +55,8 @@ public class KitchenTaskManager {
 
     public SummarySheet openSumSheet(SummarySheet ss) throws UseCaseLogicException, SummarySheetException {
         StaffMember staffMember = CatERing.getInstance().getStaffMemberManager().getCurrentStaffMember();
-        if (!staffMember.hasRole(StaffMember.Role.CHEF))
-            throw new UseCaseLogicException();
+        AuthorizationService.requireCurrentUserHasRole(StaffMember.Role.CHEF);
+
         if (!ss.isOwner(staffMember))
             throw new SummarySheetException("StaffMember: " + staffMember.getEmail() + " is not owner of the SummarySheet");
         setCurrentSummarySheet(ss);

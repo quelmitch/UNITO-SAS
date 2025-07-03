@@ -3,11 +3,10 @@ package catering.app;
 import catering.domains.event.domain.EventManager;
 import catering.domains.holidayleave.domain.HolidayLeaveManager;
 import catering.domains.kitchen.domain.KitchenTaskManager;
-import catering.domains.menu.MenuManager;
+import catering.domains.menu.domain.MenuManager;
 import catering.domains.recipe.domain.RecipeManager;
 import catering.domains.shift.domain.ShiftManager;
 import catering.domains.staffmember.domain.StaffMemberManager;
-import catering.persistence.MenuPersistence;
 import lombok.Data;
 
 import java.util.logging.Logger;
@@ -33,7 +32,6 @@ public class CatERing {
     private CatERing() {
         initializeLogger();
         initializeManagers();
-        registerPersistenceHandlers();
     }
 
     private void initializeLogger() {
@@ -49,12 +47,6 @@ public class CatERing {
         kitchenTaskManager = new KitchenTaskManager();
         shiftManager = new ShiftManager();
         holidayLeaveManager = new HolidayLeaveManager();
-    }
-
-    private void registerPersistenceHandlers() {
-        MenuPersistence menuPersistence = new MenuPersistence();
-
-        menuManager.addEventReceiver(menuPersistence);
     }
 
     public static void main(String[] args) {

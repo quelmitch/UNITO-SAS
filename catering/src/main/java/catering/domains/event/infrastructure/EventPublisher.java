@@ -2,7 +2,7 @@ package catering.domains.event.infrastructure;
 
 import catering.domains.event.domain.Event;
 import catering.domains.event.domain.Service;
-import catering.domains.menu.Menu;
+import catering.domains.menu.domain.Menu;
 
 import java.util.ArrayList;
 
